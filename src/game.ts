@@ -5,13 +5,7 @@
 "use strict";
 
 import { Canvas, CanvasRenderingContext2D } from "canvas";
-import {
-  CircleReturn,
-  RectReturn,
-  Shapes,
-  TextReturn,
-  TriangleReturn,
-} from "shapes-plus";
+import { Shapes } from "shapes-plus";
 
 import { Coords, ObjSize, CellShapes } from "./lib/models";
 import { ShapeNode } from "./shapeNode";
@@ -213,18 +207,18 @@ export class Game {
   gameGrid: GameGrid;
 
   mouseHandler(event: Events.Window.Any) {
-    console.log(JSON.stringify(event, null, 2));
+    // console.log(JSON.stringify(event, null, 2));
 
     // Check if any cells were clicked
     if (event.type === "mouseButtonDown") {
       const mouse = event as Events.Window.MouseEvent;
-      console.log("mouse:", mouse);
+      // console.log("mouse:", mouse);
 
       // Loop through cellGrid to check for a hit
       for (const i of this.gameGrid.cellGrid.grid) {
         for (const j of i) {
           if (j.bounds({ x: mouse.x, y: mouse.y })) {
-            console.log("click:", j.num);
+            console.log(`Button ${j.num} clicked`);
           }
         }
       }

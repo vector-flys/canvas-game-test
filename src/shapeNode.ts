@@ -20,7 +20,8 @@ export class ShapeNode {
       x: this.loc.x - this.size.w / 2,
       y: this.loc.y - this.size.h / 2,
     };
-    console.log("bounds test", loc, topLeft, this.size);
+    // console.log("bounds test", loc, topLeft, this.size);
+
     if (
       loc.x >= topLeft.x &&
       loc.x <= topLeft.x + this.size.w &&
