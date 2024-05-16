@@ -24,6 +24,7 @@ interface ObjSize {
 }
 
 enum CellShapes {
+  none,
   rectangle,
   triangle,
   circle,
@@ -35,7 +36,7 @@ class NumCell {
   size: ObjSize;
   num: number;
 
-  cellShape: CellShapes = CellShapes.rectangle;
+  cellShape: CellShapes = CellShapes.none;
 
   // Draw the cell according to its parameters
   draw(ctx: CanvasRenderingContext2D) {
@@ -136,10 +137,15 @@ class CellGrid {
               { x: 0, y: 0 },
               { h: 0, w: 0 }
             );
-            // Pick a random shape for the cell
-            this.grid[i][j].cellShape = Math.floor(
-              Math.random() * Object.keys(CellShapes).length
-            );
+
+            // Pick a rotating shape for the cell
+            this.grid[i][j].cellShape =
+              this.grid[i][j].num % (Object.keys(CellShapes).length / 2);
+            // console.log(
+            //   "Cell %s, shape =",
+            //   this.grid[i][j].num,
+            //   CellShapes[this.grid[i][j].cellShape]
+            // );
           }
 
           // Set the properties of the cell
