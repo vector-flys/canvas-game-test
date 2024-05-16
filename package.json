@@ -1,0 +1,32 @@
+{
+  "version": "0.0.1",
+  "license": "MIT",
+  "name": "sdl-game-test",
+  "main": "build/main.js",
+  "bin": "build/main.js",
+  "_type": "module",
+  "dependencies": {
+    "@kmamal/sdl": "*",
+    "canvas": "^2.11.2",
+    "shapes-plus": "../canvas-shapes-plus/dist/mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.8",
+    "typescript": "^5.4.5"
+  },
+  "pkg": {
+    "scripts": "build/**/*.js",
+    "assets": "assets/**/*",
+    "targets": [
+      "node18-macos-x64"
+    ],
+    "outputPath": "dist"
+  },
+  "scripts": {
+    "bundle": "./mkdist.sh",
+    "clean": "rm -rf build/ dist/ node_modules/",
+    "package": "cd scripts && node package.mjs",
+    "build": "rm -rf build/ node_modules/ && yarn install && npx tsc",
+    "build-prod": "yarn build && rm -rf node_modules && yarn install --production"
+  }
+}
