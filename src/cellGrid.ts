@@ -10,7 +10,7 @@ import { Coords, ObjSize, CellShapes } from "./lib/models";
 import { ShapeNode } from "./shapeNode";
 
 import { NumCell } from "./numCell";
-import { GameGrid } from "./gameGrid";
+import { GameRegion } from "./gameRegion";
 
 /**
  * Grid for possibilites within a cell
@@ -24,21 +24,11 @@ export class CellGrid extends ShapeNode {
   dim: number; // Dimension of possibilites matrix (eg 3 = 3x3)
   cellSize: ObjSize = { w: 0, h: 0 };
 
+  // 2-D array of num cells
   grid: NumCell[][] = [];
 
   // Draw the cell grid according to its parameters
   draw(ctx: CanvasRenderingContext2D) {
-    // The screen size may changed, we have to resize the grid
-    this.size = this?.parent?.size || {
-      h: ctx.canvas.height,
-      w: ctx.canvas.width,
-    };
-    this.cellSize = {
-      h: this.size.h / this.dim,
-      w: this.size.w / this.dim,
-    };
-    this.base = this.parent?.loc || { x: 0, y: 0 };
-
     // Initialize the grid
     for (let i = 0; i < this.dim; i++) {
       for (let j = 0; j < this.dim; j++) {
@@ -84,8 +74,22 @@ export class CellGrid extends ShapeNode {
     }
   }
 
+  redraw(ctx: CanvasRenderingContext2D) {
+    this.loc = this?.parent?.loc || { x: 0, y: 0 };
+    this.size = this?.parent?.size || {
+      w: ctx.canvas.width,
+      h: ctx.canvas.height,
+    };
+    this.cellSize = {
+      w: this.size.w / this.dim,
+      h: this.size.h / this.dim,
+    };
+    // console.log("cellGrid cell size:", this.cellSize);
+    this.draw(ctx);
+  }
+
   // Initialize the cell grid
-  constructor(loc: Coords, size: ObjSize, parent: GameGrid) {
+  constructor(loc: Coords, size: ObjSize, parent: GameRegion) {
     super(loc, size, parent);
 
     this.dim = parent?.dim;

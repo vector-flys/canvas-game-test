@@ -19,7 +19,7 @@ import { ShapeNode } from "./shapeNode";
  *   @param loc (the location within the gameGrid)
  */
 export class NumCell extends ShapeNode {
-  num: number;
+  num: number; // The number of the cell / possibility
 
   // Set this directly to apply a shape to the cell
   cellShape: CellShapes = CellShapes.none;

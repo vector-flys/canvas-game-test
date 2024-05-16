@@ -23,11 +23,19 @@ export class Game {
       const mouse = event as Events.Window.MouseEvent;
       // console.log("mouse:", mouse);
 
-      // Loop through cellGrid to check for a hit
-      for (const i of this.gameGrid.cellGrid.grid) {
-        for (const j of i) {
-          if (j.bounds({ x: mouse.x, y: mouse.y })) {
-            console.log(`Button ${j.num} clicked`);
+      // Loop through objects to check for a hit
+      for (const gr of this.gameGrid.gameRegion) {
+        for (const grj of gr) {
+          for (const cg of grj.cellGrid) {
+            for (const cgj of cg) {
+              for (const ng of cgj.grid) {
+                for (const ngj of ng) {
+                  if (ngj.bounds({ x: mouse.x, y: mouse.y })) {
+                    console.log(`Cell ${ngj.num} clicked`);
+                  }
+                }
+              }
+            }
           }
         }
       }

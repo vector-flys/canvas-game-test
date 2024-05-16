@@ -8,7 +8,7 @@ import { CanvasRenderingContext2D } from "canvas";
 
 import { Coords, ObjSize } from "./lib/models";
 import { ShapeNode } from "./shapeNode";
-import { CellGrid } from "./cellGrid";
+import { GameRegion } from "./gameRegion";
 
 /**
  * Grid for the game board
@@ -20,12 +20,16 @@ import { CellGrid } from "./cellGrid";
 export class GameGrid extends ShapeNode {
   dim: number;
 
-  // For now, just a single cell
-  cellGrid: CellGrid;
+  // 2-D array of game regions
+  gameRegion: GameRegion[][] = [];
 
   // Draw the game grid according to its parameters
   draw(ctx: CanvasRenderingContext2D) {
-    this.cellGrid.draw(ctx);
+    for (const i of this.gameRegion) {
+      for (const j of i) {
+        j.draw(ctx);
+      }
+    }
   }
 
   redraw(ctx: CanvasRenderingContext2D) {
@@ -39,7 +43,12 @@ export class GameGrid extends ShapeNode {
       y: (ctx.canvas.height - boardSize.h) / 2,
     };
     this.size = boardSize;
-    this.draw(ctx);
+    // console.log("gameGrid redraw:", this.loc, this.size);
+    for (const i of this.gameRegion) {
+      for (const j of i) {
+        j.redraw(ctx);
+      }
+    }
   }
 
   constructor(gridSize: number, loc: Coords, size: ObjSize) {
@@ -52,7 +61,8 @@ export class GameGrid extends ShapeNode {
     }
     this.dim = dim;
 
-    // For now, just pass through a cell grid so we can work on it
-    this.cellGrid = new CellGrid(this.loc, this.size, this);
+    // For now, just one region
+    this.gameRegion[0] = [];
+    this.gameRegion[0][0] = new GameRegion(this.loc, this.size, this);
   }
 }
