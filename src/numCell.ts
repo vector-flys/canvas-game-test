@@ -9,6 +9,7 @@ import { Shapes } from "shapes-plus";
 
 import { Coords, ObjSize, CellShapes } from "./lib/models";
 import { ShapeNode } from "./shapeNode";
+import { CellGrid } from "./cellGrid";
 
 /**
  * Number cell - should be useful for both possibilties and clues
@@ -81,12 +82,7 @@ export class NumCell extends ShapeNode {
     ctx.fillText(String(this.num), x + width / 2, y + height / 2);
   }
 
-  constructor(
-    num: number,
-    loc: Coords,
-    size: ObjSize,
-    parent: ShapeNode | undefined = undefined
-  ) {
+  constructor(num: number, loc: Coords, size: ObjSize, parent: CellGrid) {
     super(loc, size, parent);
     this.num = num;
   }

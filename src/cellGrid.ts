@@ -22,7 +22,9 @@ import { GameRegion } from "./gameRegion";
 export class CellGrid extends ShapeNode {
   base: Coords = { x: 0, y: 0 }; // The base location of the gameGrid
   dim: number; // Dimension of possibilites matrix (eg 3 = 3x3)
+  num: number;
   cellSize: ObjSize = { w: 0, h: 0 };
+  gridSize: ObjSize = { w: 0, h: 0 };
 
   // 2-D array of num cells
   grid: NumCell[][] = [];
@@ -35,12 +37,13 @@ export class CellGrid extends ShapeNode {
         // If the grid column doesn't exist, create an empty column
         if (!this.grid?.[i]) this.grid[i] = [];
 
-        // If the grid cell doesn't exist, create a new cell
+        // If the num cell doesn't exist, create a new cell
         if (!this.grid[i]?.[j]) {
           this.grid[i][j] = new NumCell(
             j * this.dim + i + 1,
             { x: 0, y: 0 },
-            { h: 0, w: 0 }
+            { h: 0, w: 0 },
+            this
           );
 
           // Pick a rotating shape for the cell
@@ -80,18 +83,29 @@ export class CellGrid extends ShapeNode {
       w: ctx.canvas.width,
       h: ctx.canvas.height,
     };
-    this.cellSize = {
+    this.gridSize = {
       w: this.size.w / this.dim,
       h: this.size.h / this.dim,
     };
+    this.cellSize = {
+      w: this.gridSize.w / this.dim,
+      h: this.gridSize.h / this.dim,
+    };
+    // adjust location for cell number
+    this.loc = {
+      x: this.loc.x + this.gridSize.w * ((this.num - 1) % this.dim),
+      y: this.loc.y + this.gridSize.h * Math.floor((this.num - 1) / this.dim),
+    };
+
     // console.log("cellGrid cell size:", this.cellSize);
     this.draw(ctx);
   }
 
   // Initialize the cell grid
-  constructor(loc: Coords, size: ObjSize, parent: GameRegion) {
+  constructor(num: number, loc: Coords, size: ObjSize, parent: GameRegion) {
     super(loc, size, parent);
 
     this.dim = parent?.dim;
+    this.num = num;
   }
 }

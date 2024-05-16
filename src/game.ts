@@ -7,6 +7,8 @@
 import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { Events } from "@kmamal/sdl";
 import { GameGrid } from "./gameGrid";
+import { GameRegion } from "./gameRegion";
+import { CellGrid } from "./cellGrid";
 
 export class Game {
   ctx: CanvasRenderingContext2D;
@@ -31,7 +33,11 @@ export class Game {
               for (const ng of cgj.grid) {
                 for (const ngj of ng) {
                   if (ngj.bounds({ x: mouse.x, y: mouse.y })) {
-                    console.log(`Cell ${ngj.num} clicked`);
+                    const gameCell = ngj?.parent as CellGrid;
+                    const gameRegion = gameCell?.parent as GameRegion;
+                    console.log(`Region: ${gameRegion?.num}`);
+                    console.log(`  Cell: ${gameCell?.num}`);
+                    console.log(`  Poss: ${ngj.num} clicked`);
                   }
                 }
               }

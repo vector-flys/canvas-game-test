@@ -63,6 +63,6 @@ export class GameGrid extends ShapeNode {
 
     // For now, just one region
     this.gameRegion[0] = [];
-    this.gameRegion[0][0] = new GameRegion(this.loc, this.size, this);
+    this.gameRegion[0][0] = new GameRegion(1, this.loc, this.size, this);
   }
 }

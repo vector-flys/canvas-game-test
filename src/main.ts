@@ -31,7 +31,7 @@ const redraw = () => {
   if (!canvas) {
     canvas = createCanvas(width, height);
     ctx = canvas.getContext("2d");
-    game = new Game(ctx);
+    game = new Game(ctx, 9);
     window.on("mouseButtonDown", (event) => {
       let mouseEvent: Events.Window.MouseButtonEvent = {
         type: event.type,
