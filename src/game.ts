@@ -97,6 +97,7 @@ class gameGrid {
       }
     }
 
+    // Now draw the cells
     for (let i = 0; i < this.grid.length; i++) {
       for (let j = 0; j < this.grid[i].length; j++) {
         this.grid[i][j].draw(ctx);
@@ -149,15 +150,12 @@ export class Game {
   grid: gameGrid;
 
   redraw() {
-    const width = this.canvas.width;
-    const height = this.canvas.height;
-
     // Create a gradient background
-    const gradient = this.ctx.createLinearGradient(0, 0, 0, height);
+    const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
     gradient.addColorStop(0, "black");
     gradient.addColorStop(1, "white");
     this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(0, 0, width, height);
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Draw the grid
     this.grid.draw(this.ctx);
