@@ -13,27 +13,12 @@ import {
   TriangleReturn,
 } from "shapes-plus";
 
-interface Coords {
-  x: number;
-  y: number;
-}
-
-interface ObjSize {
-  h: number;
-  w: number;
-}
-
-enum CellShapes {
-  none,
-  rectangle,
-  triangle,
-  circle,
-}
+import { Coords, ObjSize, CellShapes } from "./lib/models";
+import { ShapeNode } from "./shapeNode";
+import { Events } from "@kmamal/sdl";
 
 // A number cell
-class NumCell {
-  loc: Coords;
-  size: ObjSize;
+class NumCell extends ShapeNode {
   num: number;
 
   cellShape: CellShapes = CellShapes.none;
@@ -95,70 +80,78 @@ class NumCell {
     ctx.fillText(String(this.num), x + width / 2, y + height / 2);
   }
 
-  constructor(num: number, loc: Coords, size: ObjSize) {
-    this.loc = loc;
-    this.size = size;
+  constructor(
+    num: number,
+    loc: Coords,
+    size: ObjSize,
+    parent: ShapeNode | undefined = undefined
+  ) {
+    super(loc, size, parent);
     this.num = num;
   }
 }
 
-// Grid for possibilties within a cell
-class CellGrid {
-  loc: Coords;
-  dim: number;
-  size: ObjSize = { w: 0, h: 0 };
+/**
+ * Grid for possibilites within a cell
+ *
+ * Constructor
+ *   @param gameGrid (the gameGrid on which to draw)
+ *   @param loc (the location within the gameGrid)
+ */
+class CellGrid extends ShapeNode {
+  base: Coords = { x: 0, y: 0 }; // The base location of the gameGrid
+  dim: number; // Dimension of possibilites matrix (eg 3 = 3x3)
   cellSize: ObjSize = { w: 0, h: 0 };
 
   grid: NumCell[][] = [];
 
   // Draw the cell grid according to its parameters
   draw(ctx: CanvasRenderingContext2D) {
-    if (ctx.canvas.width != this.size.w || ctx.canvas.height != this.size.h) {
-      // The screen size changed, we have to resize the grid
-      this.size = {
-        h: ctx.canvas.height,
-        w: ctx.canvas.width,
-      };
-      this.cellSize = {
-        h: (this.size.h - 100) / this.dim,
-        w: (this.size.w - 100) / this.dim,
-      };
+    // The screen size may changed, we have to resize the grid
+    this.size = this?.parent?.size || {
+      h: ctx.canvas.height,
+      w: ctx.canvas.width,
+    };
+    this.cellSize = {
+      h: this.size.h / this.dim,
+      w: this.size.w / this.dim,
+    };
+    this.base = this.parent?.loc || { x: 0, y: 0 };
 
-      // Initialize the grid
-      for (let i = 0; i < this.dim; i++) {
-        for (let j = 0; j < this.dim; j++) {
-          // If the grid column doesn't exist, create an empty column
-          if (!this.grid?.[i]) this.grid[i] = [];
+    // Initialize the grid
+    for (let i = 0; i < this.dim; i++) {
+      for (let j = 0; j < this.dim; j++) {
+        // If the grid column doesn't exist, create an empty column
+        if (!this.grid?.[i]) this.grid[i] = [];
 
-          // If the grid cell doesn't exist, create a new cell
-          if (!this.grid[i]?.[j]) {
-            this.grid[i][j] = new NumCell(
-              j * this.dim + i + 1,
-              { x: 0, y: 0 },
-              { h: 0, w: 0 }
-            );
+        // If the grid cell doesn't exist, create a new cell
+        if (!this.grid[i]?.[j]) {
+          this.grid[i][j] = new NumCell(
+            j * this.dim + i + 1,
+            { x: 0, y: 0 },
+            { h: 0, w: 0 }
+          );
 
-            // Pick a rotating shape for the cell
-            this.grid[i][j].cellShape =
-              this.grid[i][j].num % (Object.keys(CellShapes).length / 2);
-            // console.log(
-            //   "Cell %s, shape =",
-            //   this.grid[i][j].num,
-            //   CellShapes[this.grid[i][j].cellShape]
-            // );
-          }
-
-          // Set the properties of the cell
-          const cellCenterX =
-            this.cellSize.w * i + this.cellSize.w / 2 + this.loc.x;
-          const cellCenterY =
-            this.cellSize.h * j + this.cellSize.h / 2 + this.loc.y;
-          this.grid[i][j].loc = { x: cellCenterX, y: cellCenterY };
-          this.grid[i][j].size = {
-            h: this.cellSize.h,
-            w: this.cellSize.w,
-          };
+          // Pick a rotating shape for the cell
+          this.grid[i][j].cellShape =
+            this.grid[i][j].num % (Object.keys(CellShapes).length / 2);
+          // console.log(
+          //   "Cell %s, shape =",
+          //   this.grid[i][j].num,
+          //   CellShapes[this.grid[i][j].cellShape]
+          // );
         }
+
+        // Set the properties of the cell
+        const cellCenterX =
+          this.cellSize.w * i + this.cellSize.w / 2 + this.base.x + this.loc.x;
+        const cellCenterY =
+          this.cellSize.h * j + this.cellSize.h / 2 + this.base.y + this.loc.y;
+        this.grid[i][j].loc = { x: cellCenterX, y: cellCenterY };
+        this.grid[i][j].size = {
+          h: this.cellSize.h,
+          w: this.cellSize.w,
+        };
       }
     }
 
@@ -171,46 +164,45 @@ class CellGrid {
   }
 
   // Initialize the cell grid
-  constructor(gameGrid: GameGrid) {
-    this.dim = gameGrid.dim;
-    this.loc = gameGrid.loc;
+  constructor(loc: Coords, size: ObjSize, parent: GameGrid) {
+    super(loc, size, parent);
+
+    this.dim = parent?.dim;
   }
 }
 
 // Class for the game grid iteself
-class GameGrid {
-  loc: Coords;
-  size: ObjSize;
-  gridSize: ObjSize;
+class GameGrid extends ShapeNode {
   dim: number;
 
   // For now, just a single cell
-  grid: CellGrid;
+  cellGrid: CellGrid;
 
   // Draw the game grid according to its parameters
   draw(ctx: CanvasRenderingContext2D) {
-    this.grid.draw(ctx);
+    this.cellGrid.draw(ctx);
   }
 
-  constructor(dim: number, gridSize: Coords) {
-    this.dim = dim;
-    this.size = {
-      h: gridSize.y,
-      w: gridSize.x,
+  redraw(ctx: CanvasRenderingContext2D) {
+    const pctSize = 0.75;
+    const boardSize: ObjSize = {
+      w: Math.floor(ctx.canvas.width * pctSize),
+      h: Math.floor(ctx.canvas.height * pctSize),
     };
-
-    this.gridSize = {
-      h: this.size.h - 100,
-      w: this.size.w - 100,
-    };
-
     this.loc = {
-      x: 50,
-      y: 50,
+      x: (ctx.canvas.width - boardSize.w) / 2,
+      y: (ctx.canvas.height - boardSize.h) / 2,
     };
+    this.size = boardSize;
+    this.draw(ctx);
+  }
+
+  constructor(dim: number, loc: Coords, size: ObjSize) {
+    super(loc, size);
+    this.dim = dim;
 
     // For now, just pass through a cell grid so we can work on it
-    this.grid = new CellGrid(this);
+    this.cellGrid = new CellGrid(this.loc, this.size, this);
   }
 }
 
@@ -218,7 +210,29 @@ export class Game {
   ctx: CanvasRenderingContext2D;
   canvas: Canvas;
 
-  grid: GameGrid;
+  gameGrid: GameGrid;
+
+  mouseHandler(event: Events.Window.Any) {
+    console.log(JSON.stringify(event, null, 2));
+
+    // Check if any cells were clicked
+    if (event.type === "mouseButtonDown") {
+      const mouse = event as Events.Window.MouseEvent;
+      console.log("mouse:", mouse);
+
+      // Loop through cellGrid to check for a hit
+      for (const i of this.gameGrid.cellGrid.grid) {
+        for (const j of i) {
+          if (j.bounds({ x: mouse.x, y: mouse.y })) {
+            console.log("click:", j.num);
+          }
+        }
+      }
+    } else {
+      console.log("game mouseHandler:", event);
+    }
+    // console.log("Process for grid", this.gameGrid.cellGrid.grid);
+  }
 
   redraw() {
     // Create a gradient background
@@ -228,8 +242,8 @@ export class Game {
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Draw the grid
-    this.grid.draw(this.ctx);
+    // Draw the game grid
+    this.gameGrid.redraw(this.ctx);
   }
 
   constructor(ctx: CanvasRenderingContext2D, size: number = 9) {
@@ -243,9 +257,10 @@ export class Game {
     }
 
     // Create a new game grid
-    this.grid = new GameGrid(dim, {
-      x: this.canvas.width,
-      y: this.canvas.height,
-    });
+    this.gameGrid = new GameGrid(
+      dim,
+      { x: 0, y: 0 },
+      { w: this.canvas.width, h: this.canvas.height }
+    );
   }
 }

@@ -27,11 +27,18 @@ var game: Game;
 const redraw = () => {
   const { pixelWidth: width, pixelHeight: height } = window;
 
-  // Create the canvas if we have not already done so
+  // Initialize if we have not already done so
   if (!canvas) {
     canvas = createCanvas(width, height);
     ctx = canvas.getContext("2d");
     game = new Game(ctx);
+    window.on("mouseButtonDown", (event) => {
+      console.log("Context:", ctx);
+      game.mouseHandler(event);
+    });
+    // window.on("mouseButtonUp", (event) => {
+    //   game.mouseHandler(event);
+    // });
   } else {
     canvas.width = width;
     canvas.height = height;
