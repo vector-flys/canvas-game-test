@@ -13,7 +13,7 @@
 
 "use strict";
 
-import { video } from "@kmamal/sdl";
+import { Events, video } from "@kmamal/sdl";
 import { Canvas, CanvasRenderingContext2D, createCanvas } from "canvas";
 import { Game } from "./game";
 
@@ -33,8 +33,16 @@ const redraw = () => {
     ctx = canvas.getContext("2d");
     game = new Game(ctx);
     window.on("mouseButtonDown", (event) => {
-      console.log("Context:", ctx);
-      game.mouseHandler(event);
+      let mouseEvent: Events.Window.MouseButtonEvent = {
+        type: event.type,
+        button: event.button,
+
+        // Adjust for window pixel width/height
+        x: (event.x * window.pixelWidth) / window.width,
+        y: (event.y * window.pixelHeight) / window.height,
+        touch: event.touch,
+      };
+      game.mouseHandler(mouseEvent as any);
     });
     // window.on("mouseButtonUp", (event) => {
     //   game.mouseHandler(event);

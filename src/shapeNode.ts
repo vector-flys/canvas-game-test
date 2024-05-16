@@ -16,7 +16,19 @@ export class ShapeNode {
    * @return boolean - true if the location is within the bounds of the shape
    */
   bounds(loc: Coords): boolean {
-    console.log("bounds test", loc, this.loc, this.size);
+    const topLeft = {
+      x: this.loc.x - this.size.w / 2,
+      y: this.loc.y - this.size.h / 2,
+    };
+    console.log("bounds test", loc, topLeft, this.size);
+    if (
+      loc.x >= topLeft.x &&
+      loc.x <= topLeft.x + this.size.w &&
+      loc.y >= topLeft.y &&
+      loc.y <= topLeft.y + this.size.h
+    ) {
+      return true;
+    }
     return false;
   }
 
