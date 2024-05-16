@@ -52,4 +52,4 @@ window.on("resize", ({ pixelWidth: width, pixelHeight: height }) => {
 window.on("expose", redraw);
 
 // Log everything to the console
-window.on("*", console.log);
+// window.on("*", console.log);
