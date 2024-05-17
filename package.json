@@ -10,6 +10,9 @@
     "canvas": "^2.11.2",
     "shapes-plus": "../canvas-shapes-plus/dist/mjs"
   },
+  "engines": {
+    "node": "=18"
+  },
   "devDependencies": {
     "@types/node": "^20.12.8",
     "typescript": "^5.4.5"

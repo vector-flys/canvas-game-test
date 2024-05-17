@@ -5,10 +5,14 @@
  * Dependencies:
  *   npm install -g typescript @yao-pkg/pkg
  *
+ * Node.js v 18 (lts/hydrogen)
+ *   nvm install lts/hydrogen --reinstall-packages-from=current
+ *   nvm alias default lts/hydrogen
+ *
  * Distribution (depnds on Node 18)
- *   - macOS may need to set DYLD_LIBRARY_PATH to find SDL
- *   pkg .
+ *   - macOS may need to set DYLD_LIBRARY_PATH to find node-sdl
  */
+
 // doesn't work: process.env.DYLD_LIBRARY_PATH = __dirname + "/lib";
 
 "use strict";
