@@ -40,25 +40,40 @@ export class NumCell extends ShapeNode {
     const shapes = new Shapes(ctx); // ctx object has the canvas property
     // this.text = this.shapes.createText();
 
+    // Draw the cell background
+    const rectangle = shapes.createRect();
+    rectangle.draw({
+      x: x,
+      y: y,
+      width: width,
+      height: height,
+      color: "black",
+    });
+
     // Draw the cell shape
     if (this.cellShape == CellShapes.rectangle) {
-      const rectangle = shapes.createRect();
       rectangle.draw({
-        x: x,
-        y: y,
-        width: width,
-        height: height,
-        color: "black",
-        // bColor: "#70cf70",
+        x: x + width * 0.1,
+        y: y + height * 0.1,
+        width: width * 0.8,
+        height: height * 0.8,
+        color: "red",
+        bColor: "#70cf70",
+        drawType: "outline",
       });
     } else if (this.cellShape == CellShapes.triangle) {
       const triangle = shapes.createTriangle();
+      const sideLength = (height * 0.4) / Math.sqrt(3);
       triangle.draw({
         x: x + width / 2,
-        y: y + height - height * 0.025,
-        size: height * 0.95,
-        color: "black",
-        // bColor: "#70cf70",
+        y: y + height * 0.8,
+        // size: sideLength,
+        sideAB: sideLength,
+        sideAC: sideLength,
+        sideBC: sideLength,
+        color: "red",
+        bColor: "#70cf70",
+        drawType: "fill",
       });
     } else if (this.cellShape == CellShapes.circle) {
       const circle = shapes.createCircle();

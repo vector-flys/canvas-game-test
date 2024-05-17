@@ -101,9 +101,9 @@ export class GameCell extends ShapeNode {
           );
 
           // // Pick a rotating shape for the cell
-          // this.grid[i][j].cellShape =
+          this.grid[i][j].cellShape = num;
           //   this.grid[i][j].num % (Object.keys(CellShapes).length / 2);
-          this.grid[i][j].cellShape = CellShapes.rectangle;
+          // this.grid[i][j].cellShape = CellShapes.rectangle;
         }
       }
     }
