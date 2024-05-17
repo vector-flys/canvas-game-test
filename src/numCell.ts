@@ -32,6 +32,10 @@ export class NumCell extends ShapeNode {
     const x = this.loc.x - width / 2;
     const y = this.loc.y - height / 2;
 
+    // console.log(
+    //   `numCell[${this.num}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    // );
+
     // Create a shapes handler
     const shapes = new Shapes(ctx); // ctx object has the canvas property
     // this.text = this.shapes.createText();
@@ -69,14 +73,14 @@ export class NumCell extends ShapeNode {
       });
     }
 
-    // Add a 2-pixel border
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x, y, width, height);
+    // // Add a 2-pixel border
+    // ctx.strokeStyle = "white";
+    // ctx.lineWidth = 2;
+    // ctx.strokeRect(x, y, width, height);
 
     // Add the number
     ctx.fillStyle = "white";
-    ctx.font = `${height * 0.8}px Arial`;
+    ctx.font = `${height * 0.7}px Arial`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(String(this.num), x + width / 2, y + height / 2);
@@ -84,6 +88,7 @@ export class NumCell extends ShapeNode {
 
   constructor(num: number, loc: Coords, size: ObjSize, parent: CellGrid) {
     super(loc, size, parent);
+
     this.num = num;
   }
 }

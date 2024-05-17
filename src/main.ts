@@ -26,6 +26,7 @@ var game: Game;
 // The redraw wrapper for node-canvas
 const redraw = () => {
   const { pixelWidth: width, pixelHeight: height } = window;
+  console.log("redraw", width, height);
 
   // Initialize if we have not already done so
   if (!canvas) {
@@ -63,8 +64,8 @@ window.on("resize", ({ pixelWidth: width, pixelHeight: height }) => {
   redraw();
 });
 
-// Gets called when the window is exposed
-window.on("expose", redraw);
+// Gets called when the window is exposed (seems to cause extra redraw)
+// window.on("expose", redraw);
 
 // Log everything to the console
 // window.on("*", console.log);

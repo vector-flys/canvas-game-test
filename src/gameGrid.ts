@@ -30,6 +30,10 @@ export class GameGrid extends ShapeNode {
         j.draw(ctx);
       }
     }
+    // Add a border
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(this.loc.x, this.loc.y, this.size.w, this.size.h);
   }
 
   redraw(ctx: CanvasRenderingContext2D) {
@@ -43,16 +47,26 @@ export class GameGrid extends ShapeNode {
       y: (ctx.canvas.height - boardSize.h) / 2,
     };
     this.size = boardSize;
+    console.log(
+      `gameGrid.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    );
+
     // console.log("gameGrid redraw:", this.loc, this.size);
     for (const i of this.gameRegion) {
       for (const j of i) {
         j.redraw(ctx);
       }
     }
+
+    this.draw(ctx);
   }
 
   constructor(gridSize: number, loc: Coords, size: ObjSize) {
     super(loc, size);
+    // ensure they didn't ask for something stupid
+    if (gridSize <= 0) {
+      throw new Error("Size must be greater than 0");
+    }
 
     // ensure that the size is a perfect square
     const dim = Math.sqrt(gridSize);
@@ -61,8 +75,21 @@ export class GameGrid extends ShapeNode {
     }
     this.dim = dim;
 
-    // For now, just one region
-    this.gameRegion[0] = [];
-    this.gameRegion[0][0] = new GameRegion(1, this.loc, this.size, this);
+    // Initialize the regions
+    for (let i = 0; i < this.dim; i++) {
+      for (let j = 0; j < this.dim; j++) {
+        // If the grid column doesn't exist, create an empty column
+        if (!this.gameRegion?.[i]) this.gameRegion[i] = [];
+        // If the grid region doesn't exist, create a new cell
+        if (!this.gameRegion[i]?.[j]) {
+          this.gameRegion[i][j] = new GameRegion(
+            j * this.dim + i + 1,
+            { x: 0, y: 0 },
+            { h: 0, w: 0 },
+            this
+          );
+        }
+      }
+    }
   }
 }

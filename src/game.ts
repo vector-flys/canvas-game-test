@@ -52,6 +52,8 @@ export class Game {
   }
 
   redraw() {
+    console.log("game.redraw()");
+
     // Create a gradient background
     const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
     gradient.addColorStop(0, "blue");
@@ -61,6 +63,7 @@ export class Game {
 
     // Draw the game grid
     this.gameGrid.redraw(this.ctx);
+    // this.gameGrid.draw(this.ctx);
   }
 
   constructor(ctx: CanvasRenderingContext2D, size: number = 9) {
