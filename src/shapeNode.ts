@@ -5,7 +5,7 @@
 import { Coords, ObjSize, CellShapes } from "./lib/models";
 
 export class ShapeNode {
-  base: Coords; // The base location of the node for children
+  base: Coords; // The base location of this node for children
   loc: Coords;
   size: ObjSize;
   parent: ShapeNode | undefined;

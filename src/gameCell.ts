@@ -82,7 +82,6 @@ export class GameCell extends ShapeNode {
   // Initialize the cell grid
   constructor(num: number, loc: Coords, size: ObjSize, parent: GameRegion) {
     super(loc, size, parent);
-    this.base = parent?.base;
 
     this.dim = parent?.dim;
     this.num = num;

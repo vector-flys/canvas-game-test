@@ -36,12 +36,15 @@ export class GameGrid extends ShapeNode {
     ctx.strokeRect(this.loc.x, this.loc.y, this.size.w, this.size.h);
   }
 
+  // Redraw the game grid (used when the window is resized)
   redraw(ctx: CanvasRenderingContext2D) {
-    const pctSize = 0.75;
+    const pctSize = 0.75; // Use 75% of the canvas
     const boardSize: ObjSize = {
       w: Math.floor(ctx.canvas.width * pctSize),
       h: Math.floor(ctx.canvas.height * pctSize),
     };
+
+    // Center the board on the canvas
     this.loc = {
       x: (ctx.canvas.width - boardSize.w) / 2,
       y: (ctx.canvas.height - boardSize.h) / 2,
@@ -51,7 +54,7 @@ export class GameGrid extends ShapeNode {
       `gameGrid.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
 
-    // console.log("gameGrid redraw:", this.loc, this.size);
+    // Redraw the game regions
     for (const i of this.gameRegion) {
       for (const j of i) {
         j.redraw(ctx);
