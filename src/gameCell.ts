@@ -19,8 +19,7 @@ import { GameRegion } from "./gameRegion";
  *   @param gameGrid (the gameGrid on which to draw)
  *   @param loc (the location within the gameGrid)
  */
-export class CellGrid extends ShapeNode {
-  base: Coords = { x: 0, y: 0 }; // The base location of the gameRegion
+export class GameCell extends ShapeNode {
   dim: number; // Dimension of possibilites matrix (eg 3 = 3x3)
   num: number;
   cellSize: ObjSize = { w: 0, h: 0 };
@@ -28,7 +27,7 @@ export class CellGrid extends ShapeNode {
   // 2-D array of num cells
   grid: NumCell[][] = [];
 
-  // Draw the cell grid according to its parameters
+  // Draw the possibility grid according to parameters
   draw(ctx: CanvasRenderingContext2D) {
     // Now draw the possibilites
     for (let i = 0; i < this.grid.length; i++) {
@@ -48,7 +47,7 @@ export class CellGrid extends ShapeNode {
       }
     }
 
-    // Add a border
+    // Add a border around the cell
     ctx.strokeStyle = "gray";
     ctx.lineWidth = 1;
     ctx.strokeRect(this.loc.x, this.loc.y, this.size.w, this.size.h);
@@ -105,6 +104,7 @@ export class CellGrid extends ShapeNode {
           // // Pick a rotating shape for the cell
           // this.grid[i][j].cellShape =
           //   this.grid[i][j].num % (Object.keys(CellShapes).length / 2);
+          this.grid[i][j].cellShape = CellShapes.rectangle;
         }
       }
     }

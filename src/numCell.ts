@@ -9,7 +9,7 @@ import { Shapes } from "shapes-plus";
 
 import { Coords, ObjSize, CellShapes } from "./lib/models";
 import { ShapeNode } from "./shapeNode";
-import { CellGrid } from "./cellGrid";
+import { GameCell } from "./gameCell";
 
 /**
  * Number cell - should be useful for both possibilties and clues
@@ -79,14 +79,14 @@ export class NumCell extends ShapeNode {
     // ctx.strokeRect(x, y, width, height);
 
     // Add the number
-    ctx.fillStyle = "white";
-    ctx.font = `${height * 0.7}px Arial`;
+    ctx.fillStyle = "gray";
+    ctx.font = `${height * 0.6}px Arial`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(String(this.num), x + width / 2, y + height / 2);
   }
 
-  constructor(num: number, loc: Coords, size: ObjSize, parent: CellGrid) {
+  constructor(num: number, loc: Coords, size: ObjSize, parent: GameCell) {
     super(loc, size, parent);
 
     this.num = num;

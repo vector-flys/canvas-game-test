@@ -23,14 +23,14 @@ export class GameGrid extends ShapeNode {
   // 2-D array of game regions
   gameRegion: GameRegion[][] = [];
 
-  // Draw the game grid according to its parameters
+  // Draw the game regions according to parameters
   draw(ctx: CanvasRenderingContext2D) {
     for (const i of this.gameRegion) {
       for (const j of i) {
         j.draw(ctx);
       }
     }
-    // Add a border
+    // Add a border around the game grid
     ctx.strokeStyle = "red";
     ctx.lineWidth = 3;
     ctx.strokeRect(this.loc.x, this.loc.y, this.size.w, this.size.h);

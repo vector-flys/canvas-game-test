@@ -8,7 +8,7 @@ import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { Events } from "@kmamal/sdl";
 import { GameGrid } from "./gameGrid";
 import { GameRegion } from "./gameRegion";
-import { CellGrid } from "./cellGrid";
+import { GameCell } from "./gameCell";
 
 export class Game {
   ctx: CanvasRenderingContext2D;
@@ -28,12 +28,12 @@ export class Game {
       // Loop through objects to check for a hit
       for (const gr of this.gameGrid.gameRegion) {
         for (const grj of gr) {
-          for (const cg of grj.cellGrid) {
+          for (const cg of grj.gameCell) {
             for (const cgj of cg) {
               for (const ng of cgj.grid) {
                 for (const ngj of ng) {
                   if (ngj.bounds({ x: mouse.x, y: mouse.y })) {
-                    const gameCell = ngj?.parent as CellGrid;
+                    const gameCell = ngj?.parent as GameCell;
                     const gameRegion = gameCell?.parent as GameRegion;
                     console.log(`Region: ${gameRegion?.num}`);
                     console.log(`  Cell: ${gameCell?.num}`);
@@ -48,7 +48,7 @@ export class Game {
     } else {
       console.log("game mouseHandler:", event);
     }
-    // console.log("Process for grid", this.gameGrid.cellGrid.grid);
+    // console.log("Process for grid", this.gameGrid.gameCell.grid);
   }
 
   redraw() {

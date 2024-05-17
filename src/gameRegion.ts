@@ -7,9 +7,9 @@
 import { CanvasRenderingContext2D } from "canvas";
 
 import { Coords, ObjSize } from "./lib/models";
-import { ShapeNode } from "./shapeNode";
-import { CellGrid } from "./cellGrid";
 import { GameGrid } from "./gameGrid";
+import { GameCell } from "./gameCell";
+import { ShapeNode } from "./shapeNode";
 
 /**
  * A region for the game board (dim x dim)
@@ -19,24 +19,23 @@ import { GameGrid } from "./gameGrid";
  *   @param dim: number of cells in each direction
  */
 export class GameRegion extends ShapeNode {
-  base: Coords = { x: 0, y: 0 }; // The base location of the gameGrid
   dim: number;
   num: number;
 
   gridSize: ObjSize = { w: 0, h: 0 };
 
   // 2-D array of cell grids
-  cellGrid: CellGrid[][] = [];
+  gameCell: GameCell[][] = [];
 
-  // Draw the game region according to its parameters
+  // Draw the region cells according to parameters
   draw(ctx: CanvasRenderingContext2D) {
-    for (const i of this.cellGrid) {
+    for (const i of this.gameCell) {
       for (const j of i) {
         j.draw(ctx);
       }
     }
 
-    // Add a border
+    // Add a border around the region
     ctx.strokeStyle = "white";
     ctx.lineWidth = 2;
     ctx.strokeRect(this.loc.x, this.loc.y, this.size.w, this.size.h);
@@ -67,7 +66,7 @@ export class GameRegion extends ShapeNode {
     );
 
     // console.log("gameRegion redraw size:", this.loc, this.size);
-    for (const i of this.cellGrid) {
+    for (const i of this.gameCell) {
       for (const j of i) {
         j.redraw(ctx);
       }
@@ -88,23 +87,23 @@ export class GameRegion extends ShapeNode {
     for (let i = 0; i < this.dim; i++) {
       for (let j = 0; j < this.dim; j++) {
         // If the grid column doesn't exist, create an empty column
-        if (!this.cellGrid?.[i]) this.cellGrid[i] = [];
+        if (!this.gameCell?.[i]) this.gameCell[i] = [];
         // If the grid cell doesn't exist, create a new cell
-        if (!this.cellGrid[i]?.[j]) {
-          this.cellGrid[i][j] = new CellGrid(
+        if (!this.gameCell[i]?.[j]) {
+          this.gameCell[i][j] = new GameCell(
             j * this.dim + i + 1,
             { x: 0, y: 0 },
             { h: 0, w: 0 },
             this
           );
         }
-        // Set the properties of the cellGrid
+        // Set the properties of the gameCell
         const cellCenterX =
           this.gridSize.w * i + this.gridSize.w / 2 + this.base.x + this.loc.x;
         const cellCenterY =
           this.gridSize.h * j + this.gridSize.h / 2 + this.base.y + this.loc.y;
-        this.cellGrid[i][j].loc = { x: cellCenterX, y: cellCenterY };
-        this.cellGrid[i][j].size = {
+        this.gameCell[i][j].loc = { x: cellCenterX, y: cellCenterY };
+        this.gameCell[i][j].size = {
           h: this.gridSize.h,
           w: this.gridSize.w,
         };
