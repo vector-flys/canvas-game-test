@@ -15,7 +15,7 @@ import { GameRegion } from "./gameRegion";
  *
  * Constructor
  *   @param ShapeNode parameters
- *   @param dim: number of cells in each direction
+ *   @param dim: dimension of the puzzle (eg: 1, 2, 3)
  */
 export class GameGrid extends ShapeNode {
   dim: number;
@@ -61,17 +61,11 @@ export class GameGrid extends ShapeNode {
     this.draw(ctx);
   }
 
-  constructor(gridSize: number, loc: Coords, size: ObjSize) {
+  constructor(dim: number, loc: Coords, size: ObjSize) {
     super(loc, size);
     // ensure they didn't ask for something stupid
-    if (gridSize <= 0) {
+    if (dim <= 0) {
       throw new Error("Size must be greater than 0");
-    }
-
-    // ensure that the size is a perfect square
-    const dim = Math.sqrt(gridSize);
-    if (gridSize !== dim * dim) {
-      throw new Error("Size must be a perfect square");
     }
     this.dim = dim;
 

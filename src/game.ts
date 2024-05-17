@@ -66,14 +66,14 @@ export class Game {
     // this.gameGrid.draw(this.ctx);
   }
 
-  constructor(ctx: CanvasRenderingContext2D, size: number = 9) {
+  constructor(ctx: CanvasRenderingContext2D, dim: number = 3) {
     this.ctx = ctx;
     this.canvas = ctx.canvas;
-    this.gridSize = size;
+    this.gridSize = dim * dim;
 
     // Create a new game grid
     this.gameGrid = new GameGrid(
-      size,
+      dim,
       { x: 0, y: 0 },
       { w: this.canvas.width, h: this.canvas.height }
     );
