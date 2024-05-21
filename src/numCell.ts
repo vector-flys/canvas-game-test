@@ -62,18 +62,15 @@ export class NumCell extends ShapeNode {
         drawType: "outline",
       });
     } else if (this.cellShape == CellShapes.triangle) {
-      const triangle = shapes.createTriangle();
+      const triangle = shapes.createEquiTriangle();
       const sideLength = (height * 0.4) / Math.sqrt(3);
       triangle.draw({
         x: x + width / 2,
-        y: y + height * 0.8,
-        // size: sideLength,
-        sideAB: sideLength,
-        sideAC: sideLength,
-        sideBC: sideLength,
+        y: y + height / 2,
+        height: height * 0.8,
         color: "red",
         bColor: "#70cf70",
-        drawType: "fill",
+        drawType: "outline",
       });
     } else if (this.cellShape == CellShapes.circle) {
       const circle = shapes.createCircle();
