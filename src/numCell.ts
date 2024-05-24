@@ -53,10 +53,10 @@ export class NumCell extends ShapeNode {
     // Draw the cell shape
     if (this.cellShape == CellShapes.rectangle) {
       rectangle.draw({
-        x: x + width * 0.1,
-        y: y + height * 0.1,
-        width: width * 0.8,
-        height: height * 0.8,
+        x: x + width * 0.15,
+        y: y + height * 0.15,
+        width: width * 0.7,
+        height: height * 0.7,
         color: "red",
         bColor: "#70cf70",
         drawType: "outline",
@@ -74,7 +74,7 @@ export class NumCell extends ShapeNode {
       });
     } else if (this.cellShape == CellShapes.circle) {
       const circle = shapes.createCircle();
-      const radius = (width + height) / 5;
+      const radius = height * 0.4; // (width + height) / 5;
       circle.draw({
         x: x + width / 2,
         y: y + height / 2,

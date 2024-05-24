@@ -5,7 +5,7 @@
 "use strict";
 
 import { Canvas, CanvasRenderingContext2D } from "canvas";
-import { Events } from "@kmamal/sdl";
+import { Events, Sdl } from "@kmamal/sdl";
 import { GameGrid } from "./gameGrid";
 import { GameRegion } from "./gameRegion";
 import { GameCell } from "./gameCell";
@@ -16,6 +16,38 @@ export class Game {
   gridSize: number;
 
   gameGrid: GameGrid;
+
+  /**
+   * Handle animations, this runs on setInterval
+   *
+   * The max number of ticks is Number.MAX_SAFE_INTEGER (9,007,199,254,740,991)
+   *   ...or 285,600 years if counting milliseconds
+   */
+  private ticks: number = 0;
+  private animInterval: number = 10; // Interval in milliseconds
+  private anim(game: Game, window: Sdl.Video.Window) {
+    game.ticks++;
+
+    // Exit gracefully when the window is closed
+    if (window.destroyed) process.exit(0);
+
+    // Do stuff here every interval
+
+    // Add stuff here to be done every second
+    if (game.ticks % (1000 / game.animInterval) === 0) {
+      // console.log("game.anim(every second)");
+    }
+
+    // Add stuff here to be done every 10 seconds
+    if (game.ticks % ((1000 * 10) / game.animInterval) === 0) {
+      // console.log("game.anim(every ten seconds)");
+    }
+
+    // Add stuff here to be done every minute
+    if (game.ticks % ((1000 * 60) / game.animInterval) === 0) {
+      console.log("game.anim(every minute)");
+    }
+  }
 
   mouseHandler(event: Events.Window.Any) {
     // console.log(JSON.stringify(event, null, 2));
@@ -66,7 +98,11 @@ export class Game {
     // this.gameGrid.draw(this.ctx);
   }
 
-  constructor(ctx: CanvasRenderingContext2D, dim: number = 3) {
+  constructor(
+    window: Sdl.Video.Window,
+    ctx: CanvasRenderingContext2D,
+    dim: number = 3
+  ) {
     this.ctx = ctx;
     this.canvas = ctx.canvas;
     this.gridSize = dim * dim;
@@ -77,5 +113,8 @@ export class Game {
       { x: 0, y: 0 },
       { w: this.canvas.width, h: this.canvas.height }
     );
+
+    // Start the animation timer
+    setInterval(this.anim, this.animInterval, this, window);
   }
 }
