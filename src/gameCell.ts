@@ -11,6 +11,8 @@ import { ShapeNode } from "./shapeNode";
 
 import { NumCell } from "./numCell";
 import { GameRegion } from "./gameRegion";
+import { Shapes } from "shapes-plus";
+import { coordsToNum, numToCoords } from "./lib/utils";
 
 /**
  * Grid for possibilites within a cell
@@ -22,28 +24,113 @@ import { GameRegion } from "./gameRegion";
 export class GameCell extends ShapeNode {
   dim: number; // Dimension of possibilites matrix (eg 3 = 3x3)
   num: number;
-  cellSize: ObjSize = { w: 0, h: 0 };
+  value: number | undefined = undefined;
+  possibilitySize: ObjSize = { w: 0, h: 0 };
 
   // 2-D array of num cells
   grid: NumCell[][] = [];
 
+  // Set the value of a cell
+  setValue(value: number | undefined) {
+    if (!value || value === 0) {
+      this.value = undefined;
+    } else {
+      this.value = value;
+    }
+  }
+
+  // Return an array of all possible values, starting with 1
+  allPossibilities() {
+    const size = this.dim * this.dim;
+    return Array.from(Array(size), (_: number, i: number) => i + 1);
+  }
+
+  // Set the possibilities
+  setPossible(possible: boolean = true, match: number[] = []) {
+    const toSet = match.length > 0 ? match : this.allPossibilities();
+    for (const poss of toSet) {
+      if (toSet.includes(poss)) {
+        const cellXY = numToCoords(poss - 1, this.dim * this.dim);
+        this.grid[cellXY.x][cellXY.y].showPoss = possible;
+      }
+    }
+  }
+
+  // Set the possibility shapes
+  setPossibleShape(shape: CellShapes = CellShapes.none, match: number[] = []) {
+    const toSet = match.length > 0 ? match : this.allPossibilities();
+    for (const poss of toSet) {
+      if (toSet.includes(poss)) {
+        const cellXY = numToCoords(poss - 1, this.dim * this.dim);
+        this.grid[cellXY.x][cellXY.y].cellShape = shape;
+      }
+    }
+  }
+
+  // Set the possibility shapes
+  setPossibleNumColor(color: string = "gray", match: number[] = []) {
+    const toSet = match.length > 0 ? match : this.allPossibilities();
+    for (const poss of toSet) {
+      if (toSet.includes(poss)) {
+        const cellXY = numToCoords(poss - 1, this.dim * this.dim);
+        this.grid[cellXY.x][cellXY.y].numColor = color;
+      }
+    }
+  }
+
   // Draw the possibility grid according to parameters
   draw(ctx: CanvasRenderingContext2D) {
-    // Now draw the possibilites
-    for (let i = 0; i < this.grid.length; i++) {
-      for (let j = 0; j < this.grid[i].length; j++) {
-        // Set the properties of the numCell
-        const cellCenterX =
-          this.cellSize.w * i + this.cellSize.w / 2 + this.base.x + this.loc.x;
-        const cellCenterY =
-          this.cellSize.h * j + this.cellSize.h / 2 + this.base.y + this.loc.y;
-        this.grid[i][j].loc = { x: cellCenterX, y: cellCenterY };
-        this.grid[i][j].size = {
-          h: this.cellSize.h,
-          w: this.cellSize.w,
-        };
+    // const width = this.size.w;
+    // const height = this.size.h;
+    // const x = this.loc.x - width / 2;
+    // const y = this.loc.y - height / 2;
 
-        this.grid[i][j].draw(ctx);
+    // Draw the cell background
+    const shapes = new Shapes(ctx); // ctx object has the canvas property
+    const rectangle = shapes.createRect();
+    rectangle.draw({
+      x: this.loc.x,
+      y: this.loc.y,
+      width: this.size.w,
+      height: this.size.h,
+      color: "gray",
+    });
+
+    // console.log("gameCell.draw()", this.value);
+    if (this.value) {
+      // Draw the value instead of possibilities
+      ctx.fillStyle = "white";
+      ctx.font = `${this.size.h * 0.6}px Arial`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(
+        String(this.value),
+        this.loc.x + this.size.w / 2,
+        this.loc.y + this.size.h / 2
+      );
+    } else {
+      // Draw the possibilites
+      for (let i = 0; i < this.grid.length; i++) {
+        for (let j = 0; j < this.grid[i].length; j++) {
+          // Set the properties of the numCell
+          const cellCenterX =
+            this.possibilitySize.w * i +
+            this.possibilitySize.w / 2 +
+            this.base.x +
+            this.loc.x;
+          const cellCenterY =
+            this.possibilitySize.h * j +
+            this.possibilitySize.h / 2 +
+            this.base.y +
+            this.loc.y;
+          this.grid[i][j].loc = { x: cellCenterX, y: cellCenterY };
+          this.grid[i][j].size = {
+            h: this.possibilitySize.h,
+            w: this.possibilitySize.w,
+          };
+
+          this.grid[i][j].draw(ctx);
+        }
       }
     }
 
@@ -63,7 +150,7 @@ export class GameCell extends ShapeNode {
       w: this.size.w / this.dim,
       h: this.size.h / this.dim,
     };
-    this.cellSize = {
+    this.possibilitySize = {
       w: this.size.w / this.dim,
       h: this.size.h / this.dim,
     };

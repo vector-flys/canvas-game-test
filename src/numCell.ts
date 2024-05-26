@@ -21,9 +21,13 @@ import { GameCell } from "./gameCell";
  */
 export class NumCell extends ShapeNode {
   num: number; // The number of the cell / possibility
+  showPoss: boolean = true;
 
   // Set this directly to apply a shape to the cell
   cellShape: CellShapes = CellShapes.none;
+
+  // Set this directly to apply foreground color to the number
+  numColor: string = "gray";
 
   // Draw the cell according to its parameters
   draw(ctx: CanvasRenderingContext2D) {
@@ -49,6 +53,9 @@ export class NumCell extends ShapeNode {
       height: height,
       color: "black",
     });
+
+    // Don't draw the shape if the number is not possible
+    if (!this.showPoss) return;
 
     // Draw the cell shape
     if (this.cellShape == CellShapes.rectangle) {
@@ -91,7 +98,7 @@ export class NumCell extends ShapeNode {
     // ctx.strokeRect(x, y, width, height);
 
     // Add the number
-    ctx.fillStyle = "gray";
+    ctx.fillStyle = this.numColor;
     ctx.font = `${height * 0.6}px Arial`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";

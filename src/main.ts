@@ -60,6 +60,7 @@ const redraw = () => {
   // Draw the game object
   game?.redraw();
 
+  // Update the contents of the window
   const buffer = canvas.toBuffer("raw");
   window.render(width, height, width * 4, "bgra32", buffer);
 };
