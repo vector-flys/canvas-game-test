@@ -31,7 +31,7 @@ export class GameGrid extends ShapeNode {
       }
     }
     // Add a border around the game grid
-    this.drawBorder("red");
+    // this.drawBorder("red");
   }
 
   // Redraw the game grid (used when the window is resized)
@@ -39,7 +39,7 @@ export class GameGrid extends ShapeNode {
     console.log(
       `gameGrid.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
-    this.fill("white");
+    // this.fill("white");
 
     // Redraw the game regions
     for (const i of this.gameRegion) {

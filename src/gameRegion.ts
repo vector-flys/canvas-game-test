@@ -41,7 +41,7 @@ export class GameRegion extends ShapeNode {
     }
 
     // Add a border around the region
-    this.drawBorder("white");
+    // this.drawBorder("white");
   }
 
   // Redraw the game region (used when the parent is resized)
@@ -70,7 +70,7 @@ export class GameRegion extends ShapeNode {
     console.log(
       `gameRegion[${this.num}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
-    this.fill("green");
+    // this.fill("green");
     // this.value = this.num;
 
     // console.log("gameRegion redraw size:", this.loc, this.size);

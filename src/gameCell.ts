@@ -80,11 +80,6 @@ export class GameCell extends ShapeNode {
 
   // Draw the possibility grid according to parameters
   draw(ctx: CanvasRenderingContext2D) {
-    // const width = this.size.w;
-    // const height = this.size.h;
-    // const x = this.loc.x - width / 2;
-    // const y = this.loc.y - height / 2;
-
     // Draw the cell background
     this.fill("gray");
 
