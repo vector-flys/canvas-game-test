@@ -62,14 +62,13 @@ export class GameRegion extends ShapeNode {
       h: this.size.h / this.dim,
     };
     // adjust location for region number
-    const base = this?.parent?.topLeft() || {
-      x: -this.ctx.canvas.width / 2,
-      y: -this.ctx.canvas.height / 2,
-    };
+    const base = this?.parent?.loc || { x: 0, y: 0 };
+    const cdOff = this.dim === 1 ? 0 : (this.dim - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
+    const off = offXY(this.num, this.gridDim);
     this.setLoc({
       // x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
-      x: base.x,
-      y: base.y,
+      x: base.x + cdOff * this.size.w * off.x,
+      y: base.y + cdOff * this.size.h * off.y,
     });
     console.log(
       `gameRegion[${this.num}~${Math.floor(cdOff)}].redraw([${this.loc.x}, ${
