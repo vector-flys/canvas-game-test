@@ -62,13 +62,14 @@ export class GameRegion extends ShapeNode {
       h: this.size.h / this.dim,
     };
     // adjust location for region number
-    const base = this?.parent?.loc || { x: 0, y: 0 };
-    const cdOff = this.dim === 1 ? 0 : (this.dim - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
-    const off = offXY(this.num, this.gridDim);
+    const base = this?.parent?.topLeft() || {
+      x: -this.ctx.canvas.width / 2,
+      y: -this.ctx.canvas.height / 2,
+    };
     this.setLoc({
       // x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
-      x: base.x + cdOff * this.size.w * off.x,
-      y: base.y + cdOff * this.size.h * off.y,
+      x: base.x,
+      y: base.y,
     });
     console.log(
       `gameRegion[${this.num}~${Math.floor(cdOff)}].redraw([${this.loc.x}, ${
@@ -78,10 +79,10 @@ export class GameRegion extends ShapeNode {
     // console.log(
     //   `gameRegion[${this.num}].redraw(${ci},${ri})@${this.size.w}x${this.size.h}`
     // );
-    // this.fill("green");
-    // this.drawBorder("white");
-    // this.value = this.num;
-    // return;
+    this.fill("green");
+    this.drawBorder("white");
+    this.value = this.num;
+    return;
 
     // console.log("gameRegion redraw size:", this.loc, this.size);
     for (const i of this.gameCell) {
