@@ -6,12 +6,12 @@
 
 import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { Events, Sdl } from "@kmamal/sdl";
+import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 
 export class Game {
   ctx: CanvasRenderingContext2D;
   canvas: Canvas;
-  gridSize: number; // Number of regions / cells / possibilities (eg: 4, 9 ...)
-  gameSize: number; // Number of region cells (eg 16, 81 ...)
+  shapeNodes: ShapeNode[] = [];
 
   /**
    * Handle animations, this runs on setInterval
@@ -26,7 +26,6 @@ export class Game {
     game.ticks++;
 
     let dirty: boolean = false;
-    let newValue: boolean = false;
 
     // Exit gracefully when the window is closed
     if (window.destroyed) process.exit(0);
@@ -65,10 +64,16 @@ export class Game {
     // Check if any cells were clicked
     if (event.type === "mouseButtonDown") {
       const mouse = event as Events.Window.MouseEvent;
-      console.log("mouse:", JSON.stringify(mouse, null, 2));
+      const parentNode = this.shapeNodes[0];
+      // console.log("mouse:", JSON.stringify(mouse, null, 2));
+
+      // List the objects that were clicked
+      console.log("\n");
+      for (const shape of parentNode.childHits({ x: mouse.x, y: mouse.y })) {
+        console.log("shape %s clicked", shape.name);
+      }
 
       // Loop through all regions and all cells to check for a hit
-      console.log("Mouse: checking %s cells", this.gameSize);
     } else {
       console.log("game mouseHandler:", event);
     }
@@ -84,6 +89,34 @@ export class Game {
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+    const parentNode = new ShapeNode({ x: 300, y: 300 }, { w: 400, h: 400 });
+    parentNode.fill(this.ctx, "red");
+
+    const child1 = parentNode.addChild({
+      loc: { x: 200, y: 200 },
+      size: { w: 200, h: 200 },
+      name: "child1",
+    });
+    child1.fill(this.ctx, "green");
+
+    const child2 = child1.addChild({
+      loc: { x: 100, y: 100 },
+      size: { w: 100, h: 100 },
+      name: "child2",
+    });
+    child2.fill(this.ctx, "blue");
+
+    this.shapeNodes.push(parentNode, child1, child2);
+
+    console.log("Shape children:");
+    parentNode.listChildren();
+    for (const list of parentNode.listChildren()) {
+      console.log("  %s", list.child.name, list.children.length);
+      for (const list2 of list.children) {
+        console.log("    %s", list2.child.name, list2.children.length);
+      }
+    }
+
     // Draw the game grid
     // this.gameGrid.redraw(this.ctx);
   }
@@ -95,8 +128,6 @@ export class Game {
   ) {
     this.ctx = ctx;
     this.canvas = ctx.canvas;
-    this.gridSize = dim * dim;
-    this.gameSize = this.gridSize * this.gridSize;
 
     // Start the animation timer
     setInterval(this.anim, this.animInterval, this, window);
