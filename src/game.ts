@@ -133,26 +133,28 @@ export class Game {
             cellXY.y
           ];
 
-        // // Check if the cell was clicked
-        // if (checkCell.bounds({ x: mouse.x, y: mouse.y })) {
-        //   console.log(
-        //     `Region: ${(checkCell?.parent as GameRegion).num}`,
-        //     JSON.stringify(regXY)
-        //   );
-        //   console.log(
-        //     `  Cell: ${checkCell.num} clicked`,
-        //     JSON.stringify(cellXY)
-        //   );
-        // }
+        // Check if the cell was clicked - shapeNode.bounds seems to be broken here
+        //   it looks like an issue with relative vs. absolute loc in the shapeNode
+        if (checkCell.bounds({ x: mouse.x, y: mouse.y })) {
+          console.log(
+            `Region: ${(checkCell?.parent as GameRegion).num}`,
+            JSON.stringify(regXY)
+          );
+          console.log(
+            `  Cell: ${checkCell.num} clicked`,
+            JSON.stringify(cellXY)
+          );
+        }
 
+        // Check each possibility bounds
         for (const ng of checkCell.grid) {
           for (const ngj of ng) {
             if (ngj.bounds({ x: mouse.x, y: mouse.y })) {
               const gameCell = ngj?.parent as GameCell;
               const gameRegion = gameCell?.parent as GameRegion;
-              console.log(`Region: ${gameRegion?.num}`);
-              console.log(`  Cell: ${gameCell?.num}`);
-              console.log(`  Poss: ${ngj.num} clicked`);
+              console.log(`  Region: ${gameRegion?.num} (${region})`);
+              console.log(`    Cell: ${gameCell?.num} (${cell})`);
+              console.log(`    Poss: ${ngj.num} clicked`);
             }
           }
         }

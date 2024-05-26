@@ -19,7 +19,7 @@
 
 import { Events, video } from "@kmamal/sdl";
 import { Canvas, CanvasRenderingContext2D, createCanvas } from "canvas";
-import { Game } from "./game";
+import { Game } from "./game-sandbox";
 
 const window = video.createWindow({ title: "Game Test", resizable: true });
 
