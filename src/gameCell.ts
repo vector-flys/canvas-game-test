@@ -12,7 +12,7 @@ import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { NumCell } from "./numCell";
 import { GameRegion } from "./gameRegion";
 import { Shapes } from "shapes-plus";
-import { coordsToNum, numToCoords } from "./lib/utils";
+import { coordsToNum, numToCoords, offXY } from "./lib/utils";
 
 /**
  * Grid for possibilites within a cell
@@ -23,8 +23,10 @@ import { coordsToNum, numToCoords } from "./lib/utils";
  */
 export class GameCell extends ShapeNode {
   dim: number; // Dimension of game cell matrix (eg 3 = 3x3)
+  gridDim: number; // Dimension of grid (eg 9 = 3x3)
   num: number;
   value: number | undefined = undefined;
+
   possibilitySize: ObjSize = { w: 0, h: 0 };
 
   // 2-D array of num cells
@@ -131,12 +133,13 @@ export class GameCell extends ShapeNode {
       h: this.size.h / this.dim,
     };
     // adjust location for cell number
-    const base = this.parent?.loc || { x: 0, y: 0 };
-    const xB = this.size.w / 2;
-    const yB = this.size.h / 2;
+    const base = this?.parent?.loc || { x: 0, y: 0 };
+    const cdOff = this.dim === 1 ? 0 : (this.dim - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
+    const off = offXY(this.num, this.gridDim);
     this.setLoc({
-      x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
-      y: base.y + this.size.h * Math.floor((this.num - 1) / this.dim) - yB,
+      // x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
+      x: base.x + cdOff * this.size.w * off.x,
+      y: base.y + cdOff * this.size.h * off.y,
     });
     // console.log(
     //   `cellGrid[${this.num}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
@@ -150,6 +153,7 @@ export class GameCell extends ShapeNode {
     super(param, parent);
 
     this.dim = parent?.dim;
+    this.gridDim = this.dim * this.dim;
     this.num = num;
     // Initialize the grid
     for (let i = 0; i < this.dim; i++) {

@@ -13,7 +13,7 @@ import { CellShapes, ObjSize } from "./lib/models";
 export class Game {
   ctx: CanvasRenderingContext2D;
   canvas: Canvas;
-  gridSize: number; // Number of regions / cells / possibilities (eg: 4, 9 ...)
+  gridDim: number; // Number of regions / cells / possibilities (eg: 4, 9 ...)
   gameSize: number; // Number of region cells (eg 16, 81 ...)
 
   gameGrid: GameGrid;
@@ -44,23 +44,23 @@ export class Game {
       // console.log("Every Second...");
 
       // One full round
-      if (game.seconds <= game.gameSize + game.gridSize) {
+      if (game.seconds <= game.gameSize + game.gridDim) {
         const matrix = numToCoords(game.seconds - 1, game.gameSize);
-        const startReg = numToCoords(matrix.y, game.gridSize);
-        const startCel = numToCoords(matrix.x, game.gridSize);
+        const startReg = numToCoords(matrix.y, game.gridDim);
+        const startCel = numToCoords(matrix.x, game.gridDim);
         const newCell =
           game.gameGrid.gameRegion[startReg.x][startReg.y].gameCell[startCel.x][
             startCel.y
           ];
 
         // Iterate through all regions and all cells
-        for (let regnum = 0; regnum < game.gridSize; regnum++) {
-          const regXY = numToCoords(regnum, game.gridSize);
+        for (let regnum = 0; regnum < game.gridDim; regnum++) {
+          const regXY = numToCoords(regnum, game.gridDim);
           // console.log(`  Set region ${regnum}:`, JSON.stringify(regXY));
           const region = game.gameGrid.gameRegion[regXY.x][regXY.y];
 
-          for (let celnum = 0; celnum < game.gridSize; celnum++) {
-            const celXY = numToCoords(celnum, game.gridSize);
+          for (let celnum = 0; celnum < game.gridDim; celnum++) {
+            const celXY = numToCoords(celnum, game.gridDim);
             // console.log(`    Set cell ${celnum}:`, JSON.stringify(celXY));
             const cell = region.gameCell[celXY.x][celXY.y];
 
@@ -68,10 +68,10 @@ export class Game {
             dirty = true;
             if (cell?.value) {
               cell.setValue(cell.value + 1);
-              if (cell.value > game.gridSize) {
+              if (cell.value > game.gridDim) {
                 cell.setValue(0);
-                for (let poss = 0; poss < game.gridSize; poss++) {
-                  const pXY = numToCoords(poss, game.gridSize);
+                for (let poss = 0; poss < game.gridDim; poss++) {
+                  const pXY = numToCoords(poss, game.gridDim);
                   cell.grid[pXY.x][pXY.y].cellShape = CellShapes.none;
                   cell.setPossible(false);
                   cell.setPossible(true, [2, 3]);
@@ -179,8 +179,8 @@ export class Game {
   ) {
     this.ctx = ctx;
     this.canvas = ctx.canvas;
-    this.gridSize = dim * dim;
-    this.gameSize = this.gridSize * this.gridSize;
+    this.gridDim = dim * dim;
+    this.gameSize = this.gridDim * this.gridDim;
 
     // Create a new game grid
     this.gameGrid = new GameGrid(dim, {
@@ -190,6 +190,6 @@ export class Game {
     });
 
     // Start the animation timer
-    setInterval(this.anim, this.animInterval, this, window);
+    // setInterval(this.anim, this.animInterval, this, window);
   }
 }

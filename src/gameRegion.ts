@@ -10,6 +10,7 @@ import { Coords, ObjSize } from "./lib/models";
 import { GameGrid } from "./gameGrid";
 import { GameCell } from "./gameCell";
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
+import { numToCoords, offXY } from "./lib/utils";
 
 /**
  * A region for the game board (dim x dim)
@@ -20,6 +21,7 @@ import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
  */
 export class GameRegion extends ShapeNode {
   dim: number; // Dimension of game region matrix (eg 3 = 3x3)
+  gridDim: number; // Dimension of grid (eg 9 = 3x3)
   num: number;
   value: number | undefined = undefined; // for debugging purposes
 
@@ -60,18 +62,26 @@ export class GameRegion extends ShapeNode {
       h: this.size.h / this.dim,
     };
     // adjust location for region number
-    const base = this.parent?.loc || { x: 0, y: 0 };
-    const xB = this.size.w / 2;
-    const yB = this.size.h / 2;
+    const base = this?.parent?.loc || { x: 0, y: 0 };
+    const cdOff = this.dim === 1 ? 0 : (this.dim - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
+    const off = offXY(this.num, this.gridDim);
     this.setLoc({
-      x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
-      y: base.y + this.size.h * Math.floor((this.num - 1) / this.dim) - yB,
+      // x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
+      x: base.x + cdOff * this.size.w * off.x,
+      y: base.y + cdOff * this.size.h * off.y,
     });
     console.log(
-      `gameRegion[${this.num}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `gameRegion[${this.num}~${Math.floor(cdOff)}].redraw([${this.loc.x}, ${
+        this.loc.y
+      }] ${this.size.w}x${this.size.h})`
     );
+    // console.log(
+    //   `gameRegion[${this.num}].redraw(${ci},${ri})@${this.size.w}x${this.size.h}`
+    // );
     // this.fill("green");
+    // this.drawBorder("white");
     // this.value = this.num;
+    // return;
 
     // console.log("gameRegion redraw size:", this.loc, this.size);
     for (const i of this.gameCell) {
@@ -88,6 +98,7 @@ export class GameRegion extends ShapeNode {
     super(param, parent);
 
     this.dim = parent?.dim;
+    this.gridDim = this.dim * this.dim;
     this.num = num;
 
     // Initialize the cells

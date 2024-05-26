@@ -67,3 +67,33 @@ export function coordsToNum(coords: Coords, size: number): number {
   const dim = Math.sqrt(size);
   return coords.x + coords.y * dim;
 }
+/**
+ * Calculate x, y offset based on number
+ * @param n
+ * @returns Coords
+ */
+export function offXY(n: number, size: number): Coords {
+  const dim = Math.sqrt(size);
+
+  if (n < 1 || n > dim * dim) throw new Error(`Invalid number: ${n}`);
+  const { x, y } = numToCoords(n - 1, size);
+  const off = { x: 0, y: 0 };
+
+  process.stdout.write(`${n.toString().padStart(2, "0")}: (${x}, ${y}), `);
+  // If the dimension is even
+  if (dim % 2 === 0) {
+    const max = dim / 2;
+    // process.stdout.write("even");
+    off.x = x % dim < dim / 2 ? -1 : 1;
+    if (x === 0 || x === dim - 1) off.x *= max;
+
+    off.y = y % dim < dim / 2 ? -1 : 1;
+    if (y === 0 || y === dim - 1) off.y *= max;
+  } else {
+    // process.stdout.write("odd");
+    const nCount = Math.floor(dim / 2);
+    off.x = x - nCount;
+    off.y = y - nCount;
+  }
+  return off;
+}
