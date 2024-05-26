@@ -8,7 +8,7 @@ import { CanvasRenderingContext2D } from "canvas";
 import { Shapes } from "shapes-plus";
 
 import { Coords, ObjSize, CellShapes } from "./lib/models";
-import { ShapeNode } from "./shapeNode";
+import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { GameCell } from "./gameCell";
 
 /**
@@ -105,8 +105,8 @@ export class NumCell extends ShapeNode {
     ctx.fillText(String(this.num), x + width / 2, y + height / 2);
   }
 
-  constructor(num: number, loc: Coords, size: ObjSize, parent: GameCell) {
-    super(loc, size, parent);
+  constructor(num: number, param: ShapeNodeParameters, parent: GameCell) {
+    super(param, parent);
 
     this.num = num;
   }

@@ -89,14 +89,25 @@ export class Game {
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    const parentNode = new ShapeNode({ x: 300, y: 300 }, { w: 400, h: 400 });
+    const parentNode = new ShapeNode({
+      loc: { x: 300, y: 300 },
+      size: { w: 400, h: 400 },
+    });
     parentNode.fill(this.ctx, "red");
 
-    const child1 = parentNode.addChild({
-      loc: { x: 200, y: 200 },
-      size: { w: 200, h: 200 },
-      name: "child1",
-    });
+    // const child1 = parentNode.addChild({
+    //   loc: { x: 200, y: 200 },
+    //   size: { w: 200, h: 200 },
+    //   name: "child1",
+    // });
+    const child1 = new ShapeNode(
+      {
+        loc: { x: 200, y: 200 },
+        size: { w: 200, h: 200 },
+        name: "child1",
+      },
+      parentNode
+    );
     child1.fill(this.ctx, "green");
 
     const child2 = child1.addChild({

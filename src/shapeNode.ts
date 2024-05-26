@@ -18,7 +18,7 @@ interface childList {
 
 export class ShapeNode {
   base: Coords; // topLeft corner (x, y)
-  name: string = "generic shapeNode";
+  name: string;
   loc: Coords; // x, y of shape center
   size: ObjSize;
   parent: ShapeNode | undefined;
@@ -88,9 +88,8 @@ export class ShapeNode {
    * @param ShapeNodeParameters
    */
   addChild(child: ShapeNodeParameters): ShapeNode {
-    const shapeNode = new ShapeNode(child.loc, child.size, this);
+    const shapeNode = new ShapeNode(child, this);
     shapeNode.name = child.name || "generic child";
-    this.children.push(shapeNode);
     return shapeNode;
   }
 
@@ -107,16 +106,21 @@ export class ShapeNode {
   }
 
   constructor(
-    loc: Coords,
-    size: ObjSize,
+    param: ShapeNodeParameters,
     parent: ShapeNode | undefined = undefined
   ) {
-    this.loc = loc;
-    this.size = size;
+    this.loc = param.loc;
+    this.size = param.size;
+    this.name = param.name || "generic shapeNode";
     this.parent = parent;
 
     // Children will use base as (0, 0)
     this.base = this.topLeft();
-    console.log("base", this.base);
+
+    if (parent) {
+      parent.children.push(this);
+    }
+    // console.log("shapeNode", this
+    // console.log("base", this.base);
   }
 }

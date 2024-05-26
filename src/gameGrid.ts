@@ -7,7 +7,7 @@
 import { CanvasRenderingContext2D } from "canvas";
 
 import { Coords, ObjSize } from "./lib/models";
-import { ShapeNode } from "./shapeNode";
+import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { GameRegion } from "./gameRegion";
 
 /**
@@ -64,8 +64,8 @@ export class GameGrid extends ShapeNode {
     this.draw(ctx);
   }
 
-  constructor(dim: number, loc: Coords, size: ObjSize) {
-    super(loc, size);
+  constructor(dim: number, param: ShapeNodeParameters) {
+    super(param);
     // ensure they didn't ask for something stupid
     if (dim <= 0) {
       throw new Error("Size must be greater than 0");
@@ -81,8 +81,7 @@ export class GameGrid extends ShapeNode {
         if (!this.gameRegion[i]?.[j]) {
           this.gameRegion[i][j] = new GameRegion(
             j * this.dim + i + 1,
-            { x: 0, y: 0 },
-            { h: 0, w: 0 },
+            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 } },
             this
           );
         }

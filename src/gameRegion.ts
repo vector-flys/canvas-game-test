@@ -9,7 +9,7 @@ import { CanvasRenderingContext2D } from "canvas";
 import { Coords, ObjSize } from "./lib/models";
 import { GameGrid } from "./gameGrid";
 import { GameCell } from "./gameCell";
-import { ShapeNode } from "./shapeNode";
+import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 
 /**
  * A region for the game board (dim x dim)
@@ -75,8 +75,8 @@ export class GameRegion extends ShapeNode {
     this.draw(ctx);
   }
 
-  constructor(num: number, loc: Coords, size: ObjSize, parent: GameGrid) {
-    super(loc, size, parent);
+  constructor(num: number, param: ShapeNodeParameters, parent: GameGrid) {
+    super(param, parent);
 
     this.dim = parent?.dim;
     this.num = num;
@@ -90,8 +90,7 @@ export class GameRegion extends ShapeNode {
         if (!this.gameCell[i]?.[j]) {
           this.gameCell[i][j] = new GameCell(
             j * this.dim + i + 1,
-            { x: 0, y: 0 },
-            { h: 0, w: 0 },
+            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 } },
             this
           );
         }

@@ -212,11 +212,10 @@ export class Game {
     this.gameSize = this.gridSize * this.gridSize;
 
     // Create a new game grid
-    this.gameGrid = new GameGrid(
-      dim,
-      { x: 0, y: 0 },
-      { w: this.canvas.width, h: this.canvas.height }
-    );
+    this.gameGrid = new GameGrid(dim, {
+      loc: { x: 0, y: 0 },
+      size: { w: this.canvas.width, h: this.canvas.height },
+    });
 
     // Start the animation timer
     setInterval(this.anim, this.animInterval, this, window);

@@ -7,7 +7,7 @@
 import { CanvasRenderingContext2D } from "canvas";
 
 import { Coords, ObjSize, CellShapes } from "./lib/models";
-import { ShapeNode } from "./shapeNode";
+import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 
 import { NumCell } from "./numCell";
 import { GameRegion } from "./gameRegion";
@@ -167,8 +167,8 @@ export class GameCell extends ShapeNode {
   }
 
   // Initialize the cell grid
-  constructor(num: number, loc: Coords, size: ObjSize, parent: GameRegion) {
-    super(loc, size, parent);
+  constructor(num: number, param: ShapeNodeParameters, parent: GameRegion) {
+    super(param, parent);
 
     this.dim = parent?.dim;
     this.num = num;
@@ -182,8 +182,7 @@ export class GameCell extends ShapeNode {
         if (!this.grid[i]?.[j]) {
           this.grid[i][j] = new NumCell(
             j * this.dim + i + 1,
-            { x: 0, y: 0 },
-            { h: 0, w: 0 },
+            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 } },
             this
           );
 
