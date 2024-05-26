@@ -22,7 +22,7 @@ import { coordsToNum, numToCoords } from "./lib/utils";
  *   @param loc (the location within the gameGrid)
  */
 export class GameCell extends ShapeNode {
-  dim: number; // Dimension of possibilites matrix (eg 3 = 3x3)
+  dim: number; // Dimension of game cell matrix (eg 3 = 3x3)
   num: number;
   value: number | undefined = undefined;
   possibilitySize: ObjSize = { w: 0, h: 0 };
@@ -86,28 +86,11 @@ export class GameCell extends ShapeNode {
     // const y = this.loc.y - height / 2;
 
     // Draw the cell background
-    const shapes = new Shapes(ctx); // ctx object has the canvas property
-    const rectangle = shapes.createRect();
-    rectangle.draw({
-      x: this.loc.x,
-      y: this.loc.y,
-      width: this.size.w,
-      height: this.size.h,
-      color: "gray",
-    });
+    this.fill("gray");
 
     // console.log("gameCell.draw()", this.value);
     if (this.value) {
-      // Draw the value instead of possibilities
-      ctx.fillStyle = "white";
-      ctx.font = `${this.size.h * 0.6}px Arial`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(
-        String(this.value),
-        this.loc.x + this.size.w / 2,
-        this.loc.y + this.size.h / 2
-      );
+      this.drawText(String(this.value), "white");
     } else {
       // Draw the possibilites
       for (let i = 0; i < this.grid.length; i++) {
@@ -135,9 +118,7 @@ export class GameCell extends ShapeNode {
     }
 
     // Add a border around the cell
-    ctx.strokeStyle = "gray";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(this.loc.x, this.loc.y, this.size.w, this.size.h);
+    this.drawBorder("gray");
   }
 
   redraw(ctx: CanvasRenderingContext2D) {
@@ -146,19 +127,22 @@ export class GameCell extends ShapeNode {
       w: ctx.canvas.width,
       h: ctx.canvas.height,
     };
-    this.size = {
+    this.setSize({
       w: this.size.w / this.dim,
       h: this.size.h / this.dim,
-    };
+    });
     this.possibilitySize = {
       w: this.size.w / this.dim,
       h: this.size.h / this.dim,
     };
     // adjust location for cell number
-    this.loc = {
-      x: this.loc.x + this.size.w * ((this.num - 1) % this.dim),
-      y: this.loc.y + this.size.h * Math.floor((this.num - 1) / this.dim),
-    };
+    const base = this.parent?.loc || { x: 0, y: 0 };
+    const xB = (this.size.w - this.dim - this.dim) / 2;
+    const yB = (this.size.h - this.dim - this.dim) / 2;
+    this.setLoc({
+      x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
+      y: base.y + this.size.h * Math.floor((this.num - 1) / this.dim) - yB,
+    });
     // console.log(
     //   `cellGrid[${this.num}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     // );
@@ -180,9 +164,10 @@ export class GameCell extends ShapeNode {
 
         // If the num cell doesn't exist, create a new cell
         if (!this.grid[i]?.[j]) {
+          const num = j * this.dim + i + 1;
           this.grid[i][j] = new NumCell(
-            j * this.dim + i + 1,
-            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 } },
+            num,
+            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 }, name: `Poss ${num}` },
             this
           );
 

@@ -8,7 +8,7 @@ import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { Events, Sdl } from "@kmamal/sdl";
 import { GameGrid } from "./gameGrid";
 import { numToCoords } from "./lib/utils";
-import { CellShapes } from "./lib/models";
+import { CellShapes, ObjSize } from "./lib/models";
 
 export class Game {
   ctx: CanvasRenderingContext2D;
@@ -153,6 +153,12 @@ export class Game {
 
   redraw() {
     console.log("game.redraw()");
+    const pctSize = 0.75; // Use 75% of the canvas
+    const boardSize: ObjSize = {
+      w: Math.floor(this.ctx.canvas.width * pctSize),
+      h: Math.floor(this.ctx.canvas.height * pctSize),
+    };
+    this.gameGrid.setSize(boardSize);
 
     // Create a gradient background
     const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
@@ -178,6 +184,7 @@ export class Game {
 
     // Create a new game grid
     this.gameGrid = new GameGrid(dim, {
+      ctx: this.ctx,
       loc: { x: 0, y: 0 },
       size: { w: this.canvas.width, h: this.canvas.height },
     });

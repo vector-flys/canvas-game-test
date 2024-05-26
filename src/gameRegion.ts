@@ -19,8 +19,9 @@ import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
  *   @param dim: number of cells in each direction
  */
 export class GameRegion extends ShapeNode {
-  dim: number;
+  dim: number; // Dimension of game region matrix (eg 3 = 3x3)
   num: number;
+  value: number | undefined = undefined; // for debugging purposes
 
   gridSize: ObjSize = { w: 0, h: 0 };
 
@@ -29,16 +30,18 @@ export class GameRegion extends ShapeNode {
 
   // Draw the region cells according to parameters
   draw(ctx: CanvasRenderingContext2D) {
-    for (const i of this.gameCell) {
-      for (const j of i) {
-        j.draw(ctx);
+    if (this?.value) {
+      this.drawText(String(this.value), "white");
+    } else {
+      for (const i of this.gameCell) {
+        for (const j of i) {
+          j.draw(ctx);
+        }
       }
     }
 
     // Add a border around the region
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(this.loc.x, this.loc.y, this.size.w, this.size.h);
+    this.drawBorder("white");
   }
 
   // Redraw the game region (used when the parent is resized)
@@ -48,26 +51,32 @@ export class GameRegion extends ShapeNode {
       w: ctx.canvas.width,
       h: ctx.canvas.height,
     };
-    this.size = {
+    this.setSize({
       w: this.size.w / this.dim,
       h: this.size.h / this.dim,
-    };
+    });
     this.gridSize = {
       w: this.size.w / this.dim,
       h: this.size.h / this.dim,
     };
     // adjust location for region number
-    this.loc = {
-      x: this.loc.x + this.size.w * ((this.num - 1) % this.dim),
-      y: this.loc.y + this.size.h * Math.floor((this.num - 1) / this.dim),
-    };
+    const base = this.parent?.loc || { x: 0, y: 0 };
+    const xB = (this.size.w - this.dim - this.dim) / 2;
+    const yB = (this.size.h - this.dim - this.dim) / 2;
+    this.setLoc({
+      x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
+      y: base.y + this.size.h * Math.floor((this.num - 1) / this.dim) - yB,
+    });
     console.log(
       `gameRegion[${this.num}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
+    this.fill("green");
+    // this.value = this.num;
 
     // console.log("gameRegion redraw size:", this.loc, this.size);
     for (const i of this.gameCell) {
       for (const j of i) {
+        // j.value = j.num; // force cell to show value
         j.redraw(ctx);
       }
     }
@@ -91,7 +100,12 @@ export class GameRegion extends ShapeNode {
           const num = j * this.dim + i + 1;
           this.gameCell[i][j] = new GameCell(
             num,
-            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 }, name: `Cell:${num}` },
+            {
+              loc: { x: 0, y: 0 },
+              size: { h: 0, w: 0 },
+              name: `Cell ${num}`,
+              clickable: true,
+            },
             this
           );
         }

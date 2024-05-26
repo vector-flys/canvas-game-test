@@ -10,6 +10,7 @@ export interface ShapeNodeParameters {
   loc: Coords;
   size: ObjSize;
   name?: string;
+  clickable?: boolean;
 }
 
 interface childList {
@@ -24,6 +25,7 @@ export class ShapeNode {
   loc: Coords; // x, y of shape center (0,0 = center of canvas)
   size: ObjSize;
   parent: ShapeNode | undefined;
+  clickable: boolean;
   children: ShapeNode[] = [];
 
   /**
@@ -54,11 +56,42 @@ export class ShapeNode {
   }
 
   /**
+   * Set the size
+   */
+  setSize(size: ObjSize): void {
+    this.size = size;
+    this.base = this.topLeft();
+  }
+
+  /**
    * Fill the node with a solid color
    */
   fill(color: string): void {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(this.base.x, this.base.y, this.size.w, this.size.h);
+  }
+
+  /**
+   * Draw a border around the node
+   */
+  drawBorder(color: string): void {
+    this.ctx.strokeStyle = color;
+    this.ctx.strokeRect(this.base.x, this.base.y, this.size.w, this.size.h);
+  }
+
+  /**
+   * Draw text centered
+   */
+  drawText(text: string, color: string): void {
+    this.ctx.fillStyle = color;
+    this.ctx.textAlign = "center";
+    this.ctx.textBaseline = "middle";
+    this.ctx.font = `${this.size.h * 0.6}px Arial`;
+    this.ctx.fillText(
+      text,
+      this.base.x + this.size.w / 2,
+      this.base.y + this.size.h / 2
+    );
   }
 
   /**
@@ -88,7 +121,7 @@ export class ShapeNode {
    */
   childHits(loc: Coords): ShapeNode[] {
     let shapeNodes: ShapeNode[] = [];
-    if (this.bounds(loc)) {
+    if (this.clickable && this.bounds(loc)) {
       shapeNodes.push(this);
     }
     for (let child of this.children) {
@@ -126,6 +159,7 @@ export class ShapeNode {
     this.loc = param.loc;
     this.size = param.size;
     this.name = param.name || "generic shapeNode";
+    this.clickable = param.clickable || false;
     this.parent = parent;
 
     if (param?.ctx && this?.parent) {
@@ -149,7 +183,7 @@ export class ShapeNode {
 
     // This is for handy reference filling and checking bounds
     this.base = this.topLeft();
-    console.log("shapeNode %s, topLeft = %s", this.name, this.topLeft());
+    // console.log("shapeNode %s, topLeft = %s", this.name, this.topLeft());
 
     if (parent) {
       parent.children.push(this);

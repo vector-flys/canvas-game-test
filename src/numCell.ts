@@ -5,11 +5,11 @@
 "use strict";
 
 import { CanvasRenderingContext2D } from "canvas";
-import { Shapes } from "shapes-plus";
 
-import { Coords, ObjSize, CellShapes } from "./lib/models";
+import { CellShapes } from "./lib/models";
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { GameCell } from "./gameCell";
+import { Shapes } from "shapes-plus";
 
 /**
  * Number cell - should be useful for both possibilties and clues
@@ -20,8 +20,10 @@ import { GameCell } from "./gameCell";
  *   @param loc (the location within the gameGrid)
  */
 export class NumCell extends ShapeNode {
+  dim: number; // Dimension of possibilites matrix (eg 3 = 3x3)
   num: number; // The number of the cell / possibility
   showPoss: boolean = true;
+  shapes: Shapes;
 
   // Set this directly to apply a shape to the cell
   cellShape: CellShapes = CellShapes.none;
@@ -31,37 +33,45 @@ export class NumCell extends ShapeNode {
 
   // Draw the cell according to its parameters
   draw(ctx: CanvasRenderingContext2D) {
+    this.loc = this?.parent?.loc || { x: 0, y: 0 };
+    this.size = this?.parent?.size || {
+      w: ctx.canvas.width,
+      h: ctx.canvas.height,
+    };
+    this.setSize({
+      w: this.size.w / this.dim,
+      h: this.size.h / this.dim,
+    });
+    // adjust location for cell number
+    const base = this.parent?.loc || { x: 0, y: 0 };
+    const xB = (this.size.w - this.dim - this.dim) / 2;
+    const yB = (this.size.h - this.dim - this.dim) / 2;
+    this.setLoc({
+      x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
+      y: base.y + this.size.h * Math.floor((this.num - 1) / this.dim) - yB,
+    });
+
     const width = this.size.w;
     const height = this.size.h;
-    const x = this.loc.x - width / 2;
-    const y = this.loc.y - height / 2;
+    const x = this.base.x + width * 0.15;
+    const y = this.base.y + height * 0.15;
 
     // console.log(
     //   `numCell[${this.num}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     // );
 
-    // Create a shapes handler
-    const shapes = new Shapes(ctx); // ctx object has the canvas property
-    // this.text = this.shapes.createText();
-
     // Draw the cell background
-    const rectangle = shapes.createRect();
-    rectangle.draw({
-      x: x,
-      y: y,
-      width: width,
-      height: height,
-      color: "black",
-    });
+    this.fill("black");
 
     // Don't draw the shape if the number is not possible
     if (!this.showPoss) return;
 
     // Draw the cell shape
     if (this.cellShape == CellShapes.rectangle) {
+      const rectangle = this.shapes.createRect();
       rectangle.draw({
-        x: x + width * 0.15,
-        y: y + height * 0.15,
+        x: x,
+        y: y,
         width: width * 0.7,
         height: height * 0.7,
         color: "red",
@@ -69,22 +79,21 @@ export class NumCell extends ShapeNode {
         drawType: "outline",
       });
     } else if (this.cellShape == CellShapes.triangle) {
-      const triangle = shapes.createEquiTriangle();
-      const sideLength = (height * 0.4) / Math.sqrt(3);
+      const triangle = this.shapes.createEquiTriangle();
       triangle.draw({
-        x: x + width / 2,
-        y: y + height / 2,
+        x: this.base.x + width / 2,
+        y: this.base.y + height / 2.1,
         height: height * 0.8,
         color: "red",
         bColor: "#70cf70",
         drawType: "outline",
       });
     } else if (this.cellShape == CellShapes.circle) {
-      const circle = shapes.createCircle();
-      const radius = height * 0.4; // (width + height) / 5;
+      const circle = this.shapes.createCircle();
+      const radius = height * 0.35; // (width + height) / 5;
       circle.draw({
-        x: x + width / 2,
-        y: y + height / 2,
+        x: this.base.x + width / 2,
+        y: this.base.y + height / 2,
         color: "red",
         bColor: "#70cf70",
         radius: radius,
@@ -92,22 +101,17 @@ export class NumCell extends ShapeNode {
       });
     }
 
-    // // Add a 2-pixel border
-    // ctx.strokeStyle = "white";
-    // ctx.lineWidth = 2;
-    // ctx.strokeRect(x, y, width, height);
-
     // Add the number
-    ctx.fillStyle = this.numColor;
-    ctx.font = `${height * 0.6}px Arial`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(String(this.num), x + width / 2, y + height / 2);
+    this.drawText(String(this.num), "gray");
   }
 
   constructor(num: number, param: ShapeNodeParameters, parent: GameCell) {
     super(param, parent);
 
+    this.dim = parent?.dim;
     this.num = num;
+
+    // Create a shapes handler
+    this.shapes = new Shapes(this.ctx); // ctx object has the canvas property
   }
 }
