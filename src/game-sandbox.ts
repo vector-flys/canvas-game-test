@@ -90,10 +90,11 @@ export class Game {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     const parentNode = new ShapeNode({
-      loc: { x: 300, y: 300 },
+      ctx: this.ctx,
+      loc: { x: -100, y: -100 },
       size: { w: 400, h: 400 },
     });
-    parentNode.fill(this.ctx, "red");
+    parentNode.fill("red");
 
     // const child1 = parentNode.addChild({
     //   loc: { x: 200, y: 200 },
@@ -102,20 +103,20 @@ export class Game {
     // });
     const child1 = new ShapeNode(
       {
-        loc: { x: 200, y: 200 },
+        loc: { x: 0, y: 0 },
         size: { w: 200, h: 200 },
         name: "child1",
       },
       parentNode
     );
-    child1.fill(this.ctx, "green");
+    child1.fill("green");
 
     const child2 = child1.addChild({
-      loc: { x: 100, y: 100 },
+      loc: { x: 0, y: 0 },
       size: { w: 100, h: 100 },
       name: "child2",
     });
-    child2.fill(this.ctx, "blue");
+    child2.fill("blue");
 
     this.shapeNodes.push(parentNode, child1, child2);
 

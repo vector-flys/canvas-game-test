@@ -50,6 +50,7 @@ export class GameGrid extends ShapeNode {
       y: (ctx.canvas.height - boardSize.h) / 2,
     };
     this.size = boardSize;
+    this.fill("white");
     console.log(
       `gameGrid.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
@@ -79,9 +80,14 @@ export class GameGrid extends ShapeNode {
         if (!this.gameRegion?.[i]) this.gameRegion[i] = [];
         // If the grid region doesn't exist, create a new cell
         if (!this.gameRegion[i]?.[j]) {
+          const num = j * this.dim + i + 1;
           this.gameRegion[i][j] = new GameRegion(
-            j * this.dim + i + 1,
-            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 } },
+            num,
+            {
+              loc: { x: 0, y: 0 },
+              size: { h: 0, w: 0 },
+              name: `Region ${num}`,
+            },
             this
           );
         }

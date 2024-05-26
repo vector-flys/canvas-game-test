@@ -3,9 +3,10 @@
  */
 
 import { CanvasRenderingContext2D } from "canvas";
-import { Coords, ObjSize, CellShapes } from "./lib/models";
+import { Coords, ObjSize } from "./lib/models";
 
 export interface ShapeNodeParameters {
+  ctx?: CanvasRenderingContext2D;
   loc: Coords;
   size: ObjSize;
   name?: string;
@@ -19,7 +20,8 @@ interface childList {
 export class ShapeNode {
   base: Coords; // topLeft corner (x, y)
   name: string;
-  loc: Coords; // x, y of shape center
+  ctx: CanvasRenderingContext2D;
+  loc: Coords; // x, y of shape center (0,0 = center of canvas)
   size: ObjSize;
   parent: ShapeNode | undefined;
   children: ShapeNode[] = [];
@@ -28,23 +30,35 @@ export class ShapeNode {
    * Find topLeft
    */
   topLeft(): Coords {
-    let topLeft = {
-      x: this.loc.x - this.size.w / 2,
-      y: this.loc.y - this.size.h / 2,
+    const ctxCenter: Coords = {
+      x: this.ctx.canvas.width / 2,
+      y: this.ctx.canvas.height / 2,
     };
-    if (this?.parent) {
-      topLeft.x += this.parent.base.x;
-      topLeft.y += this.parent.base.y;
-    }
+    let topLeft = {
+      x: ctxCenter.x + this.loc.x - this.size.w / 2,
+      y: ctxCenter.y + this.loc.y - this.size.h / 2,
+    };
+    // if (this?.parent) {
+    //   topLeft.x += this.parent.base.x;
+    //   topLeft.y += this.parent.base.y;
+    // }
     return topLeft;
+  }
+
+  /**
+   * Set the location
+   */
+  setLoc(loc: Coords = { x: 0, y: 0 }): void {
+    this.loc = loc;
+    this.base = this.topLeft();
   }
 
   /**
    * Fill the node with a solid color
    */
-  fill(ctx: CanvasRenderingContext2D, color: string): void {
-    ctx.fillStyle = color;
-    ctx.fillRect(this.base.x, this.base.y, this.size.w, this.size.h);
+  fill(color: string): void {
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(this.base.x, this.base.y, this.size.w, this.size.h);
   }
 
   /**
@@ -114,8 +128,28 @@ export class ShapeNode {
     this.name = param.name || "generic shapeNode";
     this.parent = parent;
 
-    // Children will use base as (0, 0)
+    if (param?.ctx && this?.parent) {
+      if (this.parent.ctx !== param.ctx) {
+        throw new Error("Canvas child context must match parent");
+      }
+      this.ctx = this.parent.ctx;
+    }
+
+    if (this?.parent) {
+      // Child loc is relative to parent center
+      this.loc.x += this.parent.loc.x;
+      this.loc.y += this.parent.loc.y;
+
+      this.ctx = this.parent.ctx;
+    } else if (param?.ctx) {
+      this.ctx = param.ctx;
+    } else {
+      throw new Error("Canvas context must be provided");
+    }
+
+    // This is for handy reference filling and checking bounds
     this.base = this.topLeft();
+    console.log("shapeNode %s, topLeft = %s", this.name, this.topLeft());
 
     if (parent) {
       parent.children.push(this);

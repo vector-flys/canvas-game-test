@@ -7,9 +7,7 @@
 import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { Events, Sdl } from "@kmamal/sdl";
 import { GameGrid } from "./gameGrid";
-import { GameRegion } from "./gameRegion";
-import { GameCell } from "./gameCell";
-import { numToCoords, objEqual } from "./lib/utils";
+import { numToCoords } from "./lib/utils";
 import { CellShapes } from "./lib/models";
 
 export class Game {
@@ -123,41 +121,8 @@ export class Game {
 
       // Loop through all regions and all cells to check for a hit
       console.log("Mouse: checking %s cells", this.gameSize);
-      for (let cellNum = 0; cellNum < this.gameSize; cellNum++) {
-        const { y: region, x: cell } = numToCoords(cellNum, this.gameSize);
-        // console.log("  - Checking region %s, cell %s", region, cell);
-        const regXY = numToCoords(region, this.gridSize);
-        const cellXY = numToCoords(cell, this.gridSize);
-        const checkCell =
-          this.gameGrid.gameRegion[regXY.x][regXY.y].gameCell[cellXY.x][
-            cellXY.y
-          ];
-
-        // Check if the cell was clicked - shapeNode.bounds seems to be broken here
-        //   it looks like an issue with relative vs. absolute loc in the shapeNode
-        if (checkCell.bounds({ x: mouse.x, y: mouse.y })) {
-          console.log(
-            `Region: ${(checkCell?.parent as GameRegion).num}`,
-            JSON.stringify(regXY)
-          );
-          console.log(
-            `  Cell: ${checkCell.num} clicked`,
-            JSON.stringify(cellXY)
-          );
-        }
-
-        // Check each possibility bounds
-        for (const ng of checkCell.grid) {
-          for (const ngj of ng) {
-            if (ngj.bounds({ x: mouse.x, y: mouse.y })) {
-              const gameCell = ngj?.parent as GameCell;
-              const gameRegion = gameCell?.parent as GameRegion;
-              console.log(`  Region: ${gameRegion?.num} (${region})`);
-              console.log(`    Cell: ${gameCell?.num} (${cell})`);
-              console.log(`    Poss: ${ngj.num} clicked`);
-            }
-          }
-        }
+      for (const child of this.gameGrid.childHits({ x: mouse.x, y: mouse.y })) {
+        console.log("  - shape hit:", child.name);
       }
 
       // // Loop through all possibilities to check for a hit

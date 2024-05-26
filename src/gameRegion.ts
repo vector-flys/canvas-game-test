@@ -88,9 +88,10 @@ export class GameRegion extends ShapeNode {
         if (!this.gameCell?.[i]) this.gameCell[i] = [];
         // If the grid cell doesn't exist, create a new cell
         if (!this.gameCell[i]?.[j]) {
+          const num = j * this.dim + i + 1;
           this.gameCell[i][j] = new GameCell(
-            j * this.dim + i + 1,
-            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 } },
+            num,
+            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 }, name: `Cell:${num}` },
             this
           );
         }
