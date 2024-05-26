@@ -132,8 +132,8 @@ export class GameCell extends ShapeNode {
     };
     // adjust location for cell number
     const base = this.parent?.loc || { x: 0, y: 0 };
-    const xB = (this.size.w - this.dim - this.dim) / 2;
-    const yB = (this.size.h - this.dim - this.dim) / 2;
+    const xB = this.size.w / 2;
+    const yB = this.size.h / 2;
     this.setLoc({
       x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
       y: base.y + this.size.h * Math.floor((this.num - 1) / this.dim) - yB,
