@@ -60,11 +60,11 @@ export class Game {
 
   mouseHandler(event: Events.Window.Any) {
     // console.log(JSON.stringify(event, null, 2));
+    const parentNode = this.shapeNodes[0];
 
     // Check if any cells were clicked
     if (event.type === "mouseButtonDown") {
       const mouse = event as Events.Window.MouseEvent;
-      const parentNode = this.shapeNodes[0];
       // console.log("mouse:", JSON.stringify(mouse, null, 2));
 
       // List the objects that were clicked
@@ -91,8 +91,10 @@ export class Game {
 
     const parentNode = new ShapeNode({
       ctx: this.ctx,
+      name: "parent",
       loc: { x: -100, y: -100 },
       size: { w: 400, h: 400 },
+      clickable: true,
     });
     parentNode.fill("red");
 
@@ -106,6 +108,7 @@ export class Game {
         loc: { x: 0, y: 0 },
         size: { w: 200, h: 200 },
         name: "child1",
+        clickable: true,
       },
       parentNode
     );
@@ -115,6 +118,7 @@ export class Game {
       loc: { x: 0, y: 0 },
       size: { w: 100, h: 100 },
       name: "child2",
+      clickable: true,
     });
     child2.fill("blue");
 
