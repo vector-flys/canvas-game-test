@@ -22,8 +22,7 @@ import { coordsToNum, numToCoords, offXY } from "./lib/utils";
  *   @param loc (the location within the gameGrid)
  */
 export class GameCell extends ShapeNode {
-  dim: number; // Dimension of game cell matrix (eg 3 = 3x3)
-  gridDim: number; // Dimension of grid (eg 9 = 3x3)
+  gridDim: ObjSize; // Dimension of grid (eg 9 = 3x3)
   num: number;
   value: number | undefined = undefined;
 
@@ -43,7 +42,7 @@ export class GameCell extends ShapeNode {
 
   // Return an array of all possible values, starting with 1
   allPossibilities() {
-    const size = this.dim * this.dim;
+    const size = this.gridDim.w * this.gridDim.h;
     return Array.from(Array(size), (_: number, i: number) => i + 1);
   }
 
@@ -52,7 +51,10 @@ export class GameCell extends ShapeNode {
     const toSet = match.length > 0 ? match : this.allPossibilities();
     for (const poss of toSet) {
       if (toSet.includes(poss)) {
-        const cellXY = numToCoords(poss - 1, this.dim * this.dim);
+        const cellXY = numToCoords(poss - 1, {
+          w: this.gridDim.w,
+          h: this.gridDim.h,
+        });
         this.grid[cellXY.x][cellXY.y].showPoss = possible;
       }
     }
@@ -63,7 +65,10 @@ export class GameCell extends ShapeNode {
     const toSet = match.length > 0 ? match : this.allPossibilities();
     for (const poss of toSet) {
       if (toSet.includes(poss)) {
-        const cellXY = numToCoords(poss - 1, this.dim * this.dim);
+        const cellXY = numToCoords(poss - 1, {
+          w: this.gridDim.w,
+          h: this.gridDim.h,
+        });
         this.grid[cellXY.x][cellXY.y].cellShape = shape;
       }
     }
@@ -74,7 +79,10 @@ export class GameCell extends ShapeNode {
     const toSet = match.length > 0 ? match : this.allPossibilities();
     for (const poss of toSet) {
       if (toSet.includes(poss)) {
-        const cellXY = numToCoords(poss - 1, this.dim * this.dim);
+        const cellXY = numToCoords(poss - 1, {
+          w: this.gridDim.w,
+          h: this.gridDim.h,
+        });
         this.grid[cellXY.x][cellXY.y].numColor = color;
       }
     }
@@ -125,16 +133,16 @@ export class GameCell extends ShapeNode {
       h: ctx.canvas.height,
     };
     this.setSize({
-      w: this.size.w / this.dim,
-      h: this.size.h / this.dim,
+      w: this.size.w / this.gridDim.w,
+      h: this.size.h / this.gridDim.h,
     });
     this.possibilitySize = {
-      w: this.size.w / this.dim,
-      h: this.size.h / this.dim,
+      w: this.size.w / this.gridDim.w,
+      h: this.size.h / this.gridDim.h,
     };
     // adjust location for cell number
     const base = this?.parent?.loc || { x: 0, y: 0 };
-    const cdOff = this.dim === 1 ? 0 : (this.dim - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
+    const cdOff = this.gridDim.w === 1 ? 0 : (this.gridDim.w - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
     const off = offXY(this.num, this.gridDim);
     this.setLoc({
       // x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
@@ -152,18 +160,17 @@ export class GameCell extends ShapeNode {
   constructor(num: number, param: ShapeNodeParameters, parent: GameRegion) {
     super(param, parent);
 
-    this.dim = parent?.dim;
-    this.gridDim = this.dim * this.dim;
+    this.gridDim = parent?.gridDim || { w: 100, h: 100 };
     this.num = num;
     // Initialize the grid
-    for (let i = 0; i < this.dim; i++) {
-      for (let j = 0; j < this.dim; j++) {
+    for (let i = 0; i < this.gridDim.w; i++) {
+      for (let j = 0; j < this.gridDim.h; j++) {
         // If the grid column doesn't exist, create an empty column
         if (!this.grid?.[i]) this.grid[i] = [];
 
         // If the num cell doesn't exist, create a new cell
         if (!this.grid[i]?.[j]) {
-          const num = j * this.dim + i + 1;
+          const num = j * this.gridDim.w + i + 1;
           this.grid[i][j] = new NumCell(
             num,
             { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 }, name: `Poss ${num}` },

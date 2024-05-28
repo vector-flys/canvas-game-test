@@ -20,8 +20,7 @@ import { numToCoords, offXY } from "./lib/utils";
  *   @param dim: number of cells in each direction
  */
 export class GameRegion extends ShapeNode {
-  dim: number; // Dimension of game region matrix (eg 3 = 3x3)
-  gridDim: number; // Dimension of grid (eg 9 = 3x3)
+  gridDim: ObjSize; // Dimension of grid (eg 3x3)
   num: number;
   value: number | undefined = undefined; // for debugging purposes
 
@@ -54,17 +53,17 @@ export class GameRegion extends ShapeNode {
       h: ctx.canvas.height,
     };
     this.setSize({
-      w: this.size.w / this.dim,
-      h: this.size.h / this.dim,
+      w: this.size.w / this.gridDim.w,
+      h: this.size.h / this.gridDim.h,
     });
     this.gridSize = {
-      w: this.size.w / this.dim,
-      h: this.size.h / this.dim,
+      w: this.size.w / this.gridDim.w,
+      h: this.size.h / this.gridDim.h,
     };
     // adjust location for region number
     const base = this?.parent?.loc || { x: 0, y: 0 };
-    const cdOff = this.dim === 1 ? 0 : (this.dim - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
-    const off = offXY(this.num, this.gridDim);
+    const cdOff = this.gridDim.w === 1 ? 0 : (this.gridDim.w - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
+    const off = offXY(this.num, { w: this.gridDim.w, h: this.gridDim.h });
     this.setLoc({
       // x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
       x: base.x + cdOff * this.size.w * off.x,
@@ -97,18 +96,17 @@ export class GameRegion extends ShapeNode {
   constructor(num: number, param: ShapeNodeParameters, parent: GameGrid) {
     super(param, parent);
 
-    this.dim = parent?.dim;
-    this.gridDim = this.dim * this.dim;
+    this.gridDim = parent?.gridDim || { w: 100, h: 100 };
     this.num = num;
 
     // Initialize the cells
-    for (let i = 0; i < this.dim; i++) {
-      for (let j = 0; j < this.dim; j++) {
+    for (let i = 0; i < this.gridDim.w; i++) {
+      for (let j = 0; j < this.gridDim.h; j++) {
         // If the grid column doesn't exist, create an empty column
         if (!this.gameCell?.[i]) this.gameCell[i] = [];
         // If the grid cell doesn't exist, create a new cell
         if (!this.gameCell[i]?.[j]) {
-          const num = j * this.dim + i + 1;
+          const num = j * this.gridDim.w + i + 1;
           this.gameCell[i][j] = new GameCell(
             num,
             {

@@ -108,7 +108,7 @@ export class NumCell extends ShapeNode {
   constructor(num: number, param: ShapeNodeParameters, parent: GameCell) {
     super(param, parent);
 
-    this.dim = parent?.dim;
+    this.dim = parent?.gridDim.w;
     this.num = num;
 
     // Create a shapes handler

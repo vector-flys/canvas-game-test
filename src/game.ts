@@ -13,7 +13,7 @@ import { CellShapes, ObjSize } from "./lib/models";
 export class Game {
   ctx: CanvasRenderingContext2D;
   canvas: Canvas;
-  gridDim: number; // Number of regions / cells / possibilities (eg: 4, 9 ...)
+  gridDim: ObjSize; // Number of regions / cells / possibilities (eg: 4, 9 ...)
   gameSize: number; // Number of region cells (eg 16, 81 ...)
 
   gameGrid: GameGrid;
@@ -43,24 +43,39 @@ export class Game {
       game.seconds++;
       // console.log("Every Second...");
 
-      // One full round
-      if (game.seconds <= game.gameSize + game.gridDim) {
-        const matrix = numToCoords(game.seconds - 1, game.gameSize);
-        const startReg = numToCoords(matrix.y, game.gridDim);
-        const startCel = numToCoords(matrix.x, game.gridDim);
+      /*       // One full round
+      if (game.seconds <= game.gameSize + game.gridDim.w) {
+        const matrix = numToCoords(game.seconds - 1, {
+          w: game.gameSize,
+          h: game.gameSize,
+        });
+        const startReg = numToCoords(matrix.y, {
+          w: game.gridDim,
+          h: game.gridDim,
+        });
+        const startCel = numToCoords(matrix.x, {
+          w: game.gridDim,
+          h: game.gridDim,
+        });
         const newCell =
-          game.gameGrid.gameRegion[startReg.x][startReg.y].gameCell[startCel.x][
-            startCel.y
-          ];
+          game.gameGrid.gameRegions.shapeGrid[startReg.x][startReg.y].gameCell[
+            startCel.x
+          ][startCel.y];
 
         // Iterate through all regions and all cells
         for (let regnum = 0; regnum < game.gridDim; regnum++) {
-          const regXY = numToCoords(regnum, game.gridDim);
+          const regXY = numToCoords(regnum, {
+            w: game.gridDim,
+            h: game.gridDim,
+          });
           // console.log(`  Set region ${regnum}:`, JSON.stringify(regXY));
-          const region = game.gameGrid.gameRegion[regXY.x][regXY.y];
+          const region = game.gameGrid.gameRegions.shapeGrid[regXY.x][regXY.y];
 
           for (let celnum = 0; celnum < game.gridDim; celnum++) {
-            const celXY = numToCoords(celnum, game.gridDim);
+            const celXY = numToCoords(celnum, {
+              w: game.gridDim,
+              h: game.gridDim,
+            });
             // console.log(`    Set cell ${celnum}:`, JSON.stringify(celXY));
             const cell = region.gameCell[celXY.x][celXY.y];
 
@@ -71,7 +86,10 @@ export class Game {
               if (cell.value > game.gridDim) {
                 cell.setValue(0);
                 for (let poss = 0; poss < game.gridDim; poss++) {
-                  const pXY = numToCoords(poss, game.gridDim);
+                  const pXY = numToCoords(poss, {
+                    w: game.gridDim,
+                    h: game.gridDim,
+                  });
                   cell.grid[pXY.x][pXY.y].cellShape = CellShapes.none;
                   cell.setPossible(false);
                   cell.setPossible(true, [2, 3]);
@@ -86,7 +104,7 @@ export class Game {
             cell.draw(game.ctx);
           }
         }
-      }
+      } */
 
       // console.log("game.anim(every second)");
     }
@@ -124,27 +142,6 @@ export class Game {
       for (const child of this.gameGrid.childHits({ x: mouse.x, y: mouse.y })) {
         console.log("  - shape hit:", child.name);
       }
-
-      // // Loop through all possibilities to check for a hit
-      // for (const gr of this.gameGrid.gameRegion) {
-      //   for (const grj of gr) {
-      //     for (const cg of grj.gameCell) {
-      //       for (const cgj of cg) {
-      //         for (const ng of cgj.grid) {
-      //           for (const ngj of ng) {
-      //             if (ngj.bounds({ x: mouse.x, y: mouse.y })) {
-      //               const gameCell = ngj?.parent as GameCell;
-      //               const gameRegion = gameCell?.parent as GameRegion;
-      //               console.log(`Region: ${gameRegion?.num}`);
-      //               console.log(`  Cell: ${gameCell?.num}`);
-      //               console.log(`  Poss: ${ngj.num} clicked`);
-      //             }
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
     } else {
       console.log("game mouseHandler:", event);
     }
@@ -168,8 +165,8 @@ export class Game {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Draw the game grid
-    this.gameGrid.redraw(this.ctx);
-    // this.gameGrid.draw(this.ctx);
+    this.gameGrid.redraw();
+    // this.gameGrid.draw();
   }
 
   constructor(
@@ -179,11 +176,11 @@ export class Game {
   ) {
     this.ctx = ctx;
     this.canvas = ctx.canvas;
-    this.gridDim = dim * dim;
-    this.gameSize = this.gridDim * this.gridDim;
+    this.gridDim = { w: dim, h: dim };
+    this.gameSize = dim * dim;
 
     // Create a new game grid
-    this.gameGrid = new GameGrid(dim, {
+    this.gameGrid = new GameGrid(this.gridDim, {
       ctx: this.ctx,
       loc: { x: 0, y: 0 },
       size: { w: this.canvas.width, h: this.canvas.height },

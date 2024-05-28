@@ -7,6 +7,7 @@
 import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { Events, Sdl } from "@kmamal/sdl";
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
+import { ShapeGrid } from "./shapeGrid";
 
 export class Game {
   ctx: CanvasRenderingContext2D;
@@ -84,57 +85,14 @@ export class Game {
 
     // Create a gradient background
     const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
-    gradient.addColorStop(0, "blue");
-    gradient.addColorStop(1, "lightBlue");
+    gradient.addColorStop(0, "green");
+    gradient.addColorStop(1, "lightGreen");
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    const parentNode = new ShapeNode({
-      ctx: this.ctx,
-      name: "parent",
-      loc: { x: 0, y: 0 },
-      size: { w: 400, h: 400 },
-      clickable: true,
-    });
-    parentNode.fill("red");
-
-    // const child1 = parentNode.addChild({
-    //   loc: { x: 200, y: 200 },
-    //   size: { w: 200, h: 200 },
-    //   name: "child1",
-    // });
-    const child1 = new ShapeNode(
-      {
-        loc: { x: 0, y: 0 },
-        size: { w: 200, h: 200 },
-        name: "child1",
-        clickable: true,
-      },
-      parentNode
-    );
-    child1.fill("green");
-
-    const child2 = child1.addChild({
-      loc: { x: 0, y: 0 },
-      size: { w: 100, h: 100 },
-      name: "child2",
-      clickable: true,
-    });
-    child2.fill("blue");
-
-    this.shapeNodes.push(parentNode, child1, child2);
-
-    console.log("Shape children:");
-    parentNode.listChildren();
-    for (const list of parentNode.listChildren()) {
-      console.log("  %s", list.child.name, list.children.length);
-      for (const list2 of list.children) {
-        console.log("    %s", list2.child.name, list2.children.length);
-      }
-    }
-
-    // Draw the game grid
-    // this.gameGrid.redraw(this.ctx);
+    // Draw the board
+    const gameGrid = this.shapeNodes[0] as ShapeGrid;
+    gameGrid.redraw();
   }
 
   constructor(
@@ -144,6 +102,17 @@ export class Game {
   ) {
     this.ctx = ctx;
     this.canvas = ctx.canvas;
+
+    // Add a shapeGrid
+    this.shapeNodes[0] = new ShapeGrid(
+      { w: dim, h: dim },
+      {
+        ctx: this.ctx,
+        name: "shapeGrid",
+        loc: { x: 0, y: 0 },
+        size: { w: 400, h: 400 },
+      }
+    );
 
     // Start the animation timer
     setInterval(this.anim, this.animInterval, this, window);

@@ -2,7 +2,7 @@
  * Utilities
  */
 
-import { Coords } from "./models";
+import { Coords, ObjSize } from "./models";
 
 // Is the argument an object?
 export const isObject = (object: any) => {
@@ -45,14 +45,16 @@ export function sleep(ms: number) {
  * Convert a number to x, y
  *
  * @param num - number to convert
- * @param size - size of the grid
+ * @param w - width of the grid
+ * @param h - height of the grid
+ *
  * @returns Coords
  */
-export function numToCoords(num: number, size: number): Coords {
-  const dim = Math.sqrt(size);
+export function numToCoords(num: number, dim: ObjSize): Coords {
+  if (num < 1 || num > dim.w * dim.h) throw new Error(`Invalid number: ${num}`);
   return {
-    x: (num % size) % dim,
-    y: Math.floor((num % size) / dim),
+    x: (num - 1) % dim.w,
+    y: Math.floor((num - 1) / dim.w),
   };
 }
 
@@ -63,35 +65,32 @@ export function numToCoords(num: number, size: number): Coords {
  * @param size - size of the grid
  * @returns number
  */
-export function coordsToNum(coords: Coords, size: number): number {
-  const dim = Math.sqrt(size);
-  return coords.x + coords.y * dim;
+export function coordsToNum(coords: Coords, dim: ObjSize): number {
+  return coords.x * dim.w + coords.y * dim.h + 1;
 }
 /**
  * Calculate x, y offset based on number
  * @param n
  * @returns Coords
  */
-export function offXY(n: number, size: number): Coords {
-  const dim = Math.sqrt(size);
-
-  if (n < 1 || n > dim * dim) throw new Error(`Invalid number: ${n}`);
-  const { x, y } = numToCoords(n - 1, size);
+export function offXY(n: number, dim: ObjSize): Coords {
+  if (n < 1 || n > dim.w * dim.h) throw new Error(`Invalid number: ${n}`);
+  const { x, y } = numToCoords(n, dim);
   const off = { x: 0, y: 0 };
 
-  process.stdout.write(`${n.toString().padStart(2, "0")}: (${x}, ${y}), `);
+  // process.stdout.write(`${n.toString().padStart(2, "0")}: (${x}, ${y}), `);
   // If the dimension is even
-  if (dim % 2 === 0) {
-    const max = dim / 2;
+  if (dim.w % 2 === 0) {
+    const max = dim.w / 2;
     // process.stdout.write("even");
-    off.x = x % dim < dim / 2 ? -1 : 1;
-    if (x === 0 || x === dim - 1) off.x *= max;
+    off.x = x % dim.w < dim.w / 2 ? -1 : 1;
+    if (x === 0 || x === dim.w - 1) off.x *= max;
 
-    off.y = y % dim < dim / 2 ? -1 : 1;
-    if (y === 0 || y === dim - 1) off.y *= max;
+    off.y = y % dim.w < dim.w / 2 ? -1 : 1;
+    if (y === 0 || y === dim.w - 1) off.y *= max;
   } else {
     // process.stdout.write("odd");
-    const nCount = Math.floor(dim / 2);
+    const nCount = Math.floor(dim.w / 2);
     off.x = x - nCount;
     off.y = y - nCount;
   }
