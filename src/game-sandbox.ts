@@ -80,7 +80,7 @@ export class Game {
   }
 
   redraw() {
-    console.log("game.redraw()");
+    console.log("game-sandbox.redraw()");
 
     // Create a gradient background
     const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
@@ -92,7 +92,7 @@ export class Game {
     const parentNode = new ShapeNode({
       ctx: this.ctx,
       name: "parent",
-      loc: { x: -100, y: -100 },
+      loc: { x: 0, y: 0 },
       size: { w: 400, h: 400 },
       clickable: true,
     });

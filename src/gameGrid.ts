@@ -6,7 +6,6 @@
 
 import { CanvasRenderingContext2D } from "canvas";
 
-import { Coords, ObjSize } from "./lib/models";
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { GameRegion } from "./gameRegion";
 
