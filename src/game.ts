@@ -7,8 +7,7 @@
 import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { Events, Sdl } from "@kmamal/sdl";
 import { GameGrid } from "./gameGrid";
-import { numToCoords } from "./lib/utils";
-import { CellShapes, ObjSize } from "./lib/models";
+import { ObjSize } from "./lib/models";
 
 export class Game {
   ctx: CanvasRenderingContext2D;
@@ -182,8 +181,10 @@ export class Game {
     // Create a new game grid
     this.gameGrid = new GameGrid(this.gridDim, {
       ctx: this.ctx,
+      name: "gameGrid",
       loc: { x: 0, y: 0 },
       size: { w: this.canvas.width, h: this.canvas.height },
+      clickable: true,
     });
 
     // Start the animation timer

@@ -4,22 +4,62 @@
 
 "use strict";
 
-import { CanvasRenderingContext2D } from "canvas";
-
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { ObjSize } from "./lib/models";
 import { numToCoords, offXY } from "./lib/utils";
 
 /**
- * A grid element
+ * A shape grid element
  */
-export class ShapeGridElement extends ShapeNode {
+export abstract class ShapeGridElement extends ShapeNode {
   num: number;
 
   constructor(num: number, param: ShapeNodeParameters, parent?: ShapeNode) {
     super(param, parent);
     this.num = num;
   }
+
+  abstract draw(): void;
+  abstract redraw(): void;
+}
+
+/**
+ * Function to create an array of ShapeGridElements
+ * @param classConstructor the class constructor for the element
+ * @param gridDim the dimensions of the grid
+ * @param param the parameters for the element
+ * @param parent the parent of the element
+ *
+ * @returns a 2-D array of ShapeGridElements
+ */
+function createShapeGridElements<ShapeGridElement>(
+  classConstructor: {
+    new (
+      num: number,
+      param: ShapeNodeParameters,
+      parent?: ShapeNode
+    ): ShapeGridElement;
+  },
+  gridDim: ObjSize,
+  param: ShapeNodeParameters,
+  parent?: ShapeNode
+): ShapeGridElement[][] {
+  const instances: ShapeGridElement[][] = [];
+  const baseName = param?.name || "shapeGridElement";
+
+  for (let ci = 0; ci < gridDim.w; ci++) {
+    for (let ri = 0; ri < gridDim.h; ri++) {
+      // If the grid column doesn't exist, create an empty column
+      if (!instances?.[ci]) instances[ci] = [];
+      // If the grid element doesn't exist, create a new one
+      if (!instances[ci]?.[ri]) {
+        const num = ri * gridDim.w + ci + 1;
+        param.name = `${baseName} element ${num}`;
+        instances[ci][ri] = new classConstructor(num, param, parent);
+      }
+    }
+  }
+  return instances;
 }
 
 /**
@@ -87,6 +127,12 @@ export class ShapeGrid extends ShapeNode {
   }
 
   constructor(
+    // class constructor for the grid elements
+    shapeClass: new (
+      num: number,
+      param: ShapeNodeParameters,
+      parent?: ShapeNode
+    ) => ShapeGridElement,
     gridDim: ObjSize,
     param: ShapeNodeParameters,
     parent?: ShapeNode
@@ -99,27 +145,6 @@ export class ShapeGrid extends ShapeNode {
     this.gridDim = gridDim;
 
     // Initialize the grid elements
-    for (let ci = 0; ci < this.gridDim.w; ci++) {
-      for (let ri = 0; ri < this.gridDim.h; ri++) {
-        // If the grid column doesn't exist, create an empty column
-        if (!this.shapeGrid?.[ci]) this.shapeGrid[ci] = [];
-        // If the grid element doesn't exist, create a new one
-        if (!this.shapeGrid[ci]?.[ri]) {
-          // Calculate position and size of the grid element
-          const num = ri * this.gridDim.w + ci + 1;
-          this.shapeGrid[ci][ri] = new ShapeGridElement(
-            num,
-            {
-              // Set at 0,0 for now. redraw() will adjust
-              loc: { x: 0, y: 0 },
-              size: { h: 0, w: 0 },
-              name: `grid element [${ci}, ${ri}]`,
-              clickable: true,
-            },
-            this
-          );
-        }
-      }
-    }
+    this.shapeGrid = createShapeGridElements(shapeClass, gridDim, param, this);
   }
 }

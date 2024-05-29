@@ -7,7 +7,16 @@
 import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { Events, Sdl } from "@kmamal/sdl";
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
-import { ShapeGrid } from "./shapeGrid";
+import { ShapeGrid, ShapeGridElement } from "./shapeGrid";
+
+class TestGridElement extends ShapeGridElement {
+  draw(): void {
+    this.drawText(String(this.num), "white");
+  }
+  redraw(): void {
+    this.draw();
+  }
+}
 
 export class Game {
   ctx: CanvasRenderingContext2D;
@@ -71,7 +80,11 @@ export class Game {
       // List the objects that were clicked
       console.log("\n");
       for (const shape of parentNode.childHits({ x: mouse.x, y: mouse.y })) {
-        console.log("shape %s clicked", shape.name);
+        console.log(
+          "shape %s clicked",
+          shape.name
+          //, (shape as TestGridElement).num
+        );
       }
 
       // Loop through all regions and all cells to check for a hit
@@ -105,12 +118,14 @@ export class Game {
 
     // Add a shapeGrid
     this.shapeNodes[0] = new ShapeGrid(
+      TestGridElement,
       { w: dim, h: dim },
       {
         ctx: this.ctx,
         name: "shapeGrid",
         loc: { x: 0, y: 0 },
         size: { w: 400, h: 400 },
+        clickable: true,
       }
     );
 

@@ -7,6 +7,7 @@
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { ShapeGrid } from "./shapeGrid";
 import { ObjSize } from "./lib/models";
+import { GameRegion } from "./gameRegion";
 
 /**
  * Grid for the game board
@@ -21,7 +22,7 @@ export class GameGrid extends ShapeGrid {
     param: ShapeNodeParameters,
     parent?: ShapeNode
   ) {
-    super(gridDim, param, parent);
+    super(GameRegion, gridDim, param, parent);
     // ensure they didn't ask for something stupid
     if (gridDim.w <= 0 || gridDim.h <= 0) {
       throw new Error("Grid dimensions must be greater than 0");

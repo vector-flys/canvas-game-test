@@ -20,7 +20,7 @@ interface childList {
 
 export class ShapeNode {
   base: Coords; // topLeft corner (x, y)
-  name: string;
+  public name: string;
   ctx: CanvasRenderingContext2D;
   loc: Coords; // x, y of shape center (0,0 = center of canvas)
   size: ObjSize;
@@ -188,7 +188,6 @@ export class ShapeNode {
     if (parent) {
       parent.children.push(this);
     }
-    // console.log("shapeNode", this
-    // console.log("base", this.base);
+    // console.log("Created shapeNode:", param);
   }
 }
