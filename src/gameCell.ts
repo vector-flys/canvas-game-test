@@ -4,15 +4,25 @@
 
 "use strict";
 
-import { CanvasRenderingContext2D } from "canvas";
-
-import { Coords, ObjSize, CellShapes } from "./lib/models";
-import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
+import { ObjSize, CellShapes } from "./lib/models";
+import { ShapeNodeParameters } from "./shapeNode";
 
 import { NumCell } from "./numCell";
-import { GameRegion } from "./gameRegion";
-import { Shapes } from "shapes-plus";
-import { coordsToNum, numToCoords, offXY } from "./lib/utils";
+import { RegionGrid } from "./gameRegion";
+import { ShapeGrid, ShapeGridElement } from "./shapeGrid";
+import { numToCoords } from "./lib/utils";
+
+/**
+ * A game cell
+ */
+export class GameCell extends ShapeGridElement {
+  draw() {
+    this.fill("black");
+  }
+  redraw(): void {
+    this.draw();
+  }
+}
 
 /**
  * Grid for possibilites within a cell
@@ -21,15 +31,9 @@ import { coordsToNum, numToCoords, offXY } from "./lib/utils";
  *   @param gameGrid (the gameGrid on which to draw)
  *   @param loc (the location within the gameGrid)
  */
-export class GameCell extends ShapeNode {
-  gridDim: ObjSize; // Dimension of grid (eg 9 = 3x3)
-  num: number;
-  value: number | undefined = undefined;
-
-  possibilitySize: ObjSize = { w: 0, h: 0 };
-
-  // 2-D array of num cells
-  grid: NumCell[][] = [];
+export class CellGRid extends ShapeGrid {
+  regionGrid: RegionGrid; // Pointer to the parent region grid
+  value: number | undefined = undefined; // The value of the cell
 
   // Set the value of a cell
   setValue(value: number | undefined) {
@@ -55,7 +59,8 @@ export class GameCell extends ShapeNode {
           w: this.gridDim.w,
           h: this.gridDim.h,
         });
-        this.grid[cellXY.x][cellXY.y].showPoss = possible;
+        const numCell = this.shapeGrid[cellXY.x][cellXY.y] as NumCell;
+        numCell.showPoss = possible;
       }
     }
   }
@@ -69,7 +74,8 @@ export class GameCell extends ShapeNode {
           w: this.gridDim.w,
           h: this.gridDim.h,
         });
-        this.grid[cellXY.x][cellXY.y].cellShape = shape;
+        const numCell = this.shapeGrid[cellXY.x][cellXY.y] as NumCell;
+        numCell.cellShape = shape;
       }
     }
   }
@@ -83,13 +89,14 @@ export class GameCell extends ShapeNode {
           w: this.gridDim.w,
           h: this.gridDim.h,
         });
-        this.grid[cellXY.x][cellXY.y].numColor = color;
+        const numCell = this.shapeGrid[cellXY.x][cellXY.y] as NumCell;
+        numCell.numColor = color;
       }
     }
   }
 
   // Draw the possibility grid according to parameters
-  draw(ctx: CanvasRenderingContext2D) {
+  draw() {
     // Draw the cell background
     this.fill("gray");
 
@@ -98,26 +105,9 @@ export class GameCell extends ShapeNode {
       this.drawText(String(this.value), "white");
     } else {
       // Draw the possibilites
-      for (let i = 0; i < this.grid.length; i++) {
-        for (let j = 0; j < this.grid[i].length; j++) {
-          // Set the properties of the numCell
-          const cellCenterX =
-            this.possibilitySize.w * i +
-            this.possibilitySize.w / 2 +
-            this.base.x +
-            this.loc.x;
-          const cellCenterY =
-            this.possibilitySize.h * j +
-            this.possibilitySize.h / 2 +
-            this.base.y +
-            this.loc.y;
-          this.grid[i][j].loc = { x: cellCenterX, y: cellCenterY };
-          this.grid[i][j].size = {
-            h: this.possibilitySize.h,
-            w: this.possibilitySize.w,
-          };
-
-          this.grid[i][j].draw(ctx);
+      for (let i = 0; i < this.shapeGrid.length; i++) {
+        for (let j = 0; j < this.shapeGrid[i].length; j++) {
+          this.shapeGrid[i][j].draw();
         }
       }
     }
@@ -126,63 +116,19 @@ export class GameCell extends ShapeNode {
     this.drawBorder("gray");
   }
 
-  redraw(ctx: CanvasRenderingContext2D) {
-    this.loc = this?.parent?.loc || { x: 0, y: 0 };
-    this.size = this?.parent?.size || {
-      w: ctx.canvas.width,
-      h: ctx.canvas.height,
-    };
-    this.setSize({
-      w: this.size.w / this.gridDim.w,
-      h: this.size.h / this.gridDim.h,
-    });
-    this.possibilitySize = {
-      w: this.size.w / this.gridDim.w,
-      h: this.size.h / this.gridDim.h,
-    };
-    // adjust location for cell number
-    const base = this?.parent?.loc || { x: 0, y: 0 };
-    const cdOff = this.gridDim.w === 1 ? 0 : (this.gridDim.w - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
-    const off = offXY(this.num, this.gridDim);
-    this.setLoc({
-      // x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
-      x: base.x + cdOff * this.size.w * off.x,
-      y: base.y + cdOff * this.size.h * off.y,
-    });
-    // console.log(
-    //   `cellGrid[${this.num}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
-    // );
-
-    this.draw(ctx);
+  redraw() {
+    this.draw();
   }
 
-  // Initialize the cell grid
-  constructor(num: number, param: ShapeNodeParameters, parent: GameRegion) {
-    super(param, parent);
+  constructor(
+    gridDim: ObjSize,
+    param: ShapeNodeParameters,
+    parent?: RegionGrid
+  ) {
+    // Initialize the possibility grid
+    super(NumCell, gridDim, param, parent);
+    this.regionGrid = this.parent as RegionGrid;
 
     this.gridDim = parent?.gridDim || { w: 100, h: 100 };
-    this.num = num;
-    // Initialize the grid
-    for (let i = 0; i < this.gridDim.w; i++) {
-      for (let j = 0; j < this.gridDim.h; j++) {
-        // If the grid column doesn't exist, create an empty column
-        if (!this.grid?.[i]) this.grid[i] = [];
-
-        // If the num cell doesn't exist, create a new cell
-        if (!this.grid[i]?.[j]) {
-          const num = j * this.gridDim.w + i + 1;
-          this.grid[i][j] = new NumCell(
-            num,
-            { loc: { x: 0, y: 0 }, size: { h: 0, w: 0 }, name: `Poss ${num}` },
-            this
-          );
-
-          // // Pick a rotating shape for the cell
-          this.grid[i][j].cellShape = num;
-          //   this.grid[i][j].num % (Object.keys(CellShapes).length / 2);
-          // this.grid[i][j].cellShape = CellShapes.rectangle;
-        }
-      }
-    }
   }
 }

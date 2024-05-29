@@ -8,7 +8,19 @@ import { ObjSize } from "./lib/models";
 import { GameGrid } from "./gameGrid";
 import { GameCell } from "./gameCell";
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
-import { ShapeGridElement } from "./shapeGrid";
+import { ShapeGrid, ShapeGridElement } from "./shapeGrid";
+
+/**
+ * A game region
+ */
+export class GameRegion extends ShapeGridElement {
+  draw() {
+    this.fill("black");
+  }
+  redraw(): void {
+    this.draw();
+  }
+}
 
 /**
  * A region for the game board (dim x dim)
@@ -17,16 +29,9 @@ import { ShapeGridElement } from "./shapeGrid";
  *   @param ShapeNode parameters
  *   @param dim: number of cells in each direction
  */
-export class GameRegion extends ShapeGridElement {
-  gridDim: ObjSize; // Dimension of grid (eg 3x3)
-  gameGrid: GameGrid;
-  num: number;
+export class RegionGrid extends ShapeGrid {
+  gameGrid: GameGrid; // Pointer to the parent game grid
   value: number | undefined = undefined; // for debugging purposes
-
-  gridSize: ObjSize = { w: 0, h: 0 };
-
-  // 2-D array of cell grids
-  gameCell: GameCell[][] = [];
 
   // Draw the region cells according to parameters
   draw() {
@@ -39,16 +44,13 @@ export class GameRegion extends ShapeGridElement {
   // Redraw the game region (used when the parent is resized)
   redraw() {
     // account for size changes
+    this.redraw();
     this.draw();
   }
 
-  constructor(num: number, param: ShapeNodeParameters, parent?: ShapeNode) {
-    super(num, param, parent);
+  constructor(gridDim: ObjSize, param: ShapeNodeParameters, parent?: GameGrid) {
+    super(GameCell, gridDim, param, parent);
     this.gameGrid = this.parent as GameGrid;
-
     this.gridDim = this.gameGrid?.gridDim || { w: 100, h: 100 };
-    this.num = num;
-
-    // Initialize the cells
   }
 }

@@ -8,8 +8,9 @@ import { CanvasRenderingContext2D } from "canvas";
 
 import { CellShapes } from "./lib/models";
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
-import { GameCell } from "./gameCell";
+import { CellGRid, GameCell } from "./gameCell";
 import { Shapes } from "shapes-plus";
+import { ShapeGridElement } from "./shapeGrid";
 
 /**
  * Number cell - should be useful for both possibilties and clues
@@ -19,8 +20,7 @@ import { Shapes } from "shapes-plus";
  *   @param ShapeNode parameters
  *   @param loc (the location within the gameGrid)
  */
-export class NumCell extends ShapeNode {
-  dim: number; // Dimension of possibilites matrix (eg 3 = 3x3)
+export class NumCell extends ShapeGridElement {
   num: number; // The number of the cell / possibility
   showPoss: boolean = true;
   shapes: Shapes;
@@ -32,25 +32,7 @@ export class NumCell extends ShapeNode {
   numColor: string = "gray";
 
   // Draw the cell according to its parameters
-  draw(ctx: CanvasRenderingContext2D) {
-    this.loc = this?.parent?.loc || { x: 0, y: 0 };
-    this.size = this?.parent?.size || {
-      w: ctx.canvas.width,
-      h: ctx.canvas.height,
-    };
-    this.setSize({
-      w: this.size.w / this.dim,
-      h: this.size.h / this.dim,
-    });
-    // adjust location for cell number
-    const base = this.parent?.loc || { x: 0, y: 0 };
-    const xB = this.size.w / 2;
-    const yB = this.size.h / 2;
-    this.setLoc({
-      x: base.x + this.size.w * ((this.num - 1) % this.dim) - xB,
-      y: base.y + this.size.h * Math.floor((this.num - 1) / this.dim) - yB,
-    });
-
+  draw() {
     const width = this.size.w;
     const height = this.size.h;
     const x = this.base.x + width * 0.15;
@@ -105,10 +87,12 @@ export class NumCell extends ShapeNode {
     this.drawText(String(this.num), "gray");
   }
 
-  constructor(num: number, param: ShapeNodeParameters, parent: GameCell) {
-    super(param, parent);
+  redraw(): void {
+    this.draw();
+  }
 
-    this.dim = parent?.gridDim.w;
+  constructor(num: number, param: ShapeNodeParameters, parent?: ShapeNode) {
+    super(num, param, parent);
     this.num = num;
 
     // Create a shapes handler
