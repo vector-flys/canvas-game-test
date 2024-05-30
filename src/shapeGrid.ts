@@ -135,6 +135,7 @@ export class ShapeGrid extends ShapeNode {
     }
     // Redraw any children of this object
     for (const child of this.children as any) {
+      // console.log(`    -- redrawing child ${child.name}`);
       if (child?.redraw) child.redraw();
     }
   }

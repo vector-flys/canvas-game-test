@@ -4,11 +4,11 @@
 
 "use strict";
 
-import { ShapeNodeParameters } from "./shapeNode";
+import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { ShapeGrid, ShapeGridElement } from "./shapeGrid";
 import { ObjSize } from "./lib/models";
 import { GameGrid } from "./gameGrid";
-import { GameCell } from "./gameCell";
+import { CellGrid, GameCell } from "./gameCell";
 
 /**
  * A game region
@@ -16,13 +16,13 @@ import { GameCell } from "./gameCell";
 export class GameRegion extends ShapeGridElement {
   draw() {
     console.log(
-      `region[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `   region[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
     this.drawBorder("white");
   }
   redraw(): void {
     console.log(
-      `region[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `   region[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
     this.draw();
   }
@@ -35,23 +35,60 @@ export class GameRegion extends ShapeGridElement {
  *   @param ShapeNode parameters
  *   @param dim: number of cells in each direction
  */
-export class RegionGrid extends ShapeGrid {
+export class RegionGrid extends ShapeNode {
+  regionGrid: ShapeGrid;
+  gridDim: ObjSize;
   // gameGrid: GameGrid; // Pointer to the parent game grid
   value: number | undefined = undefined; // for debugging purposes
 
   // Draw the region cells according to parameters
   draw() {
     console.log(
-      `regionGrid[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `  regionGrid[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
+      "- parent:",
+      this.parent?.name,
+      ", children:",
+      this.children.length
     );
-    this.drawText(String(this.value), "white");
-
-    // Add a border around the region
+    // this.drawText(String(this.value), "white");
+    // Add a border around the region grid
     // this.drawBorder("white");
   }
 
+  redraw() {
+    console.log(
+      `  regionGrid[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    );
+
+    // Fill the game grid with the grid of regions
+    this.setSize(this.parent?.size || { w: 100, h: 100 });
+    this.regionGrid.setSize(this.size);
+    this.draw();
+
+    // redraw all the children
+    for (const child of this.children as any) {
+      if (child?.redraw) child.redraw();
+    }
+  }
+
   constructor(gridDim: ObjSize, param: ShapeNodeParameters, parent?: GameGrid) {
-    super(GameCell, gridDim, param, parent);
+    super(param, parent);
+    this.gridDim = gridDim;
+
+    // Create a new region shape grid
+    this.regionGrid = new ShapeGrid(
+      GameRegion,
+      this.gridDim,
+      {
+        ctx: this.ctx,
+        name: "regionGrid",
+        loc: { x: 0, y: 0 },
+        size: this.size,
+        clickable: true,
+      },
+      this
+    );
+
     // this.gameGrid = this.parent as GameGrid;
     // this.gridDim = this.gameGrid?.gridDim || { w: 100, h: 100 };
   }

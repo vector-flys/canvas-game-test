@@ -5,9 +5,8 @@
 "use strict";
 
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
-import { ShapeGrid } from "./shapeGrid";
 import { ObjSize } from "./lib/models";
-import { GameRegion } from "./gameRegion";
+import { RegionGrid } from "./gameRegion";
 
 /**
  * Grid for the game board
@@ -16,12 +15,17 @@ import { GameRegion } from "./gameRegion";
  *   @param ShapeNode parameters
  *   @param dim: dimension of the puzzle (eg: 1, 2, 3)
  */
-export class GameGrid extends ShapeGrid {
-  // gameRegions: GameRegion[][];
+export class GameGrid extends ShapeNode {
+  regionGrid: RegionGrid;
+  gridDim: ObjSize;
 
   draw() {
     console.log(
-      ` ${this.name}.draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      ` ${this.name}.draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
+      "- parent:",
+      this.parent?.name,
+      ", children:",
+      this.children.length
     );
     this.fill("red");
     // for (const i of this.gameRegions) {
@@ -31,18 +35,42 @@ export class GameGrid extends ShapeGrid {
     // }
   }
 
-  // We get redraw() from the shapeGrid
+  redraw() {
+    console.log(
+      ` ${this.name}.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    );
+    this.draw();
+
+    // now redraw all the children
+    for (const child of this.children as any) {
+      if (child?.redraw) child.redraw();
+    }
+  }
 
   constructor(
     gridDim: ObjSize,
     param: ShapeNodeParameters,
     parent?: ShapeNode
   ) {
-    super(GameRegion, gridDim, param, parent);
+    super(param, parent);
+    this.gridDim = gridDim;
+
     // this.gameRegions = this.shapeGrid as GameRegion[][];
     // ensure they didn't ask for something stupid
     if (gridDim.w <= 0 || gridDim.h <= 0) {
       throw new Error("Grid dimensions must be greater than 0");
     }
+    // Create a new region grid
+    this.regionGrid = new RegionGrid(
+      this.gridDim,
+      {
+        ctx: this.ctx,
+        name: "gameGrid",
+        loc: { x: 0, y: 0 },
+        size: this.size,
+        clickable: true,
+      },
+      this
+    );
   }
 }
