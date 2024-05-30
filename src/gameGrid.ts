@@ -21,11 +21,12 @@ export class GameGrid extends ShapeNode {
 
   draw() {
     console.log(
-      ` ${this.name}.draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
+      `   ${this.name}.draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
       "- parent:",
       this.parent?.name,
-      ", children:",
-      this.children.length
+      ", children [",
+      this.children.map((c) => c.name).join(", "),
+      "]"
     );
     this.fill("red");
     // for (const i of this.gameRegions) {
@@ -65,7 +66,7 @@ export class GameGrid extends ShapeNode {
       this.gridDim,
       {
         ctx: this.ctx,
-        name: "gameGrid",
+        name: "regionGridParent",
         loc: { x: 0, y: 0 },
         size: this.size,
         clickable: true,

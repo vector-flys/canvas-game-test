@@ -117,7 +117,9 @@ export class ShapeGrid extends ShapeNode {
         console.log(
           `  ${j.num} coords: ${JSON.stringify(coords)}, off: ${JSON.stringify(
             off
-          )}, cdOff: ${cdOff}, (${j.size.w}x${j.size.h})`
+          )}, cdOff: ${cdOff}, (${Math.floor(j.size.w)}x${Math.floor(
+            j.size.h
+          )})`
         );
 
         const elementLoc = {

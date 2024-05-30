@@ -14,17 +14,42 @@ import { CellGrid, GameCell } from "./gameCell";
  * A game region
  */
 export class GameRegion extends ShapeGridElement {
+  cellGrid: CellGrid;
+  gridDim: ObjSize;
+
   draw() {
     console.log(
-      `   region[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `    region[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
     this.drawBorder("white");
   }
   redraw(): void {
     console.log(
-      `   region[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `    region[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
     this.draw();
+
+    // // redraw all the children
+    for (const child of this.children as any) {
+      if (child?.redraw) child.redraw();
+    }
+  }
+
+  constructor(num: number, param: ShapeNodeParameters, parent?: ShapeNode) {
+    super(num, param, parent);
+    this.gridDim = (this?.parent as RegionGrid).gridDim;
+    // Create a new cell shape grid
+    this.cellGrid = new CellGrid(
+      this.gridDim,
+      {
+        ctx: this.ctx,
+        name: "cellGridParent",
+        loc: { x: 0, y: 0 },
+        size: this.size,
+        clickable: true,
+      },
+      this
+    );
   }
 }
 
@@ -44,11 +69,12 @@ export class RegionGrid extends ShapeNode {
   // Draw the region cells according to parameters
   draw() {
     console.log(
-      `  regionGrid[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
+      `    ${this.name}.draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
       "- parent:",
       this.parent?.name,
-      ", children:",
-      this.children.length
+      ", children [",
+      this.children.map((c) => c.name).join(", "),
+      "]"
     );
     // this.drawText(String(this.value), "white");
     // Add a border around the region grid
@@ -57,7 +83,7 @@ export class RegionGrid extends ShapeNode {
 
   redraw() {
     console.log(
-      `  regionGrid[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `  ${this.name}.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
 
     // Fill the game grid with the grid of regions

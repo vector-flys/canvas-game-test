@@ -1,16 +1,13 @@
 /**
- * A cell grid, which is useful for displaying possibilities
+ * A game cell
  */
 
 "use strict";
 
-import { ObjSize, CellShapes } from "./lib/models";
-import { ShapeNodeParameters } from "./shapeNode";
-
-import { NumCell } from "./numCell";
+import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { ShapeGrid, ShapeGridElement } from "./shapeGrid";
-import { numToCoords } from "./lib/utils";
-import { RegionGrid } from "./gameRegion";
+import { ObjSize } from "./lib/models";
+import { GameRegion } from "./gameRegion";
 
 /**
  * A game cell
@@ -18,107 +15,94 @@ import { RegionGrid } from "./gameRegion";
 export class GameCell extends ShapeGridElement {
   draw() {
     console.log(
-      `gameCell[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `         cell[${this.name}].draw([${Math.floor(
+        this.loc.x
+      )}, ${Math.floor(this.loc.y)}] ${Math.floor(this.size.w)}x${Math.floor(
+        this.size.h
+      )})`
     );
     this.drawBorder("gray");
-    // this.fill("gray");
   }
   redraw(): void {
+    console.log(
+      `         cell[${this.name}].redraw([${Math.floor(
+        this.loc.x
+      )}, ${Math.floor(this.loc.y)}] ${Math.floor(this.size.w)}x${Math.floor(
+        this.size.h
+      )})`
+    );
     this.draw();
+
+    // // redraw all the children
+    // for (const child of this.children as any) {
+    //   if (child?.redraw) child.redraw();
+    // }
   }
 }
 
 /**
- * Grid for possibilites within a cell
+ * A cell for the game board (dim x dim)
  *
  * Constructor
- *   @param gameGrid (the gameGrid on which to draw)
- *   @param loc (the location within the gameGrid)
+ *   @param ShapeNode parameters
+ *   @param dim: number of cells in each direction
  */
-export class CellGrid extends ShapeGrid {
-  numCells: NumCell[][];
+export class CellGrid extends ShapeNode {
+  cellGrid: ShapeGrid;
+  gridDim: ObjSize;
+  // gameGrid: GameGrid; // Pointer to the parent game grid
+  value: number | undefined = undefined; // for debugging purposes
 
-  regionGrid: RegionGrid; // Pointer to the parent region grid
-  value: number | undefined = undefined; // The value of the cell
-
-  // Set the value of a cell
-  setValue(value: number | undefined) {
-    if (!value || value === 0) {
-      this.value = undefined;
-    } else {
-      this.value = value;
-    }
-  }
-
-  // Return an array of all possible values, starting with 1
-  allPossibilities() {
-    const size = this.gridDim.w * this.gridDim.h;
-    return Array.from(Array(size), (_: number, i: number) => i + 1);
-  }
-
-  // Set the possibilities
-  setPossible(possible: boolean = true, match: number[] = []) {
-    const toSet = match.length > 0 ? match : this.allPossibilities();
-    for (const poss of toSet) {
-      if (toSet.includes(poss)) {
-        const cellXY = numToCoords(poss - 1, {
-          w: this.gridDim.w,
-          h: this.gridDim.h,
-        });
-        const numCell = this.shapeGrid[cellXY.x][cellXY.y] as NumCell;
-        numCell.showPoss = possible;
-      }
-    }
-  }
-
-  // Set the possibility shapes
-  setPossibleShape(shape: CellShapes = CellShapes.none, match: number[] = []) {
-    const toSet = match.length > 0 ? match : this.allPossibilities();
-    for (const poss of toSet) {
-      if (toSet.includes(poss)) {
-        const cellXY = numToCoords(poss - 1, {
-          w: this.gridDim.w,
-          h: this.gridDim.h,
-        });
-        const numCell = this.shapeGrid[cellXY.x][cellXY.y] as NumCell;
-        numCell.cellShape = shape;
-      }
-    }
-  }
-
-  // Set the possibility shapes
-  setPossibleNumColor(color: string = "gray", match: number[] = []) {
-    const toSet = match.length > 0 ? match : this.allPossibilities();
-    for (const poss of toSet) {
-      if (toSet.includes(poss)) {
-        const cellXY = numToCoords(poss - 1, {
-          w: this.gridDim.w,
-          h: this.gridDim.h,
-        });
-        const numCell = this.shapeGrid[cellXY.x][cellXY.y] as NumCell;
-        numCell.numColor = color;
-      }
-    }
-  }
-
-  // Draw the possibility grid according to parameters
+  // Draw the cell cells according to parameters
   draw() {
     console.log(
-      `cellGrid[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `       ${this.name}.draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
+      "- parent:",
+      this.parent?.name,
+      ", children:",
+      this.children.length
     );
-    this.fill("blue");
+    // this.drawText(String(this.value), "white");
+    // Add a border around the cell grid
+    // this.drawBorder("white");
+  }
+
+  redraw() {
+    console.log(
+      `     ${this.name}.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    );
+
+    // Fill the game grid with the grid of cells
+    this.setSize(this.parent?.size || { w: 100, h: 100 });
+    this.cellGrid.setSize(this.size);
+    this.draw();
+
+    // redraw all the children
+    for (const child of this.children as any) {
+      if (child?.redraw) child.redraw();
+    }
   }
 
   constructor(
     gridDim: ObjSize,
     param: ShapeNodeParameters,
-    parent?: RegionGrid
+    parent?: GameRegion
   ) {
-    // Initialize the possibility grid
-    super(NumCell, gridDim, param, parent);
-    this.numCells = this.shapeGrid as NumCell[][];
-    this.regionGrid = this.parent as RegionGrid;
+    super(param, parent);
+    this.gridDim = gridDim;
 
-    this.gridDim = parent?.gridDim || { w: 100, h: 100 };
+    // Create a new cell shape grid
+    this.cellGrid = new ShapeGrid(
+      GameCell,
+      this.gridDim,
+      {
+        ctx: this.ctx,
+        name: "cellGrid",
+        loc: { x: 0, y: 0 },
+        size: this.size,
+        clickable: true,
+      },
+      this
+    );
   }
 }
