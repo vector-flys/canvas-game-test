@@ -88,8 +88,5 @@ export class RegionGrid extends ShapeNode {
       },
       this
     );
-
-    // this.gameGrid = this.parent as GameGrid;
-    // this.gridDim = this.gameGrid?.gridDim || { w: 100, h: 100 };
   }
 }
