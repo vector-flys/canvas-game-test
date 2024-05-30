@@ -15,7 +15,7 @@ import { ShapeGrid, ShapeGridElement } from "./shapeGrid";
  */
 export class GameRegion extends ShapeGridElement {
   draw() {
-    this.fill("black");
+    this.drawBorder("white");
   }
   redraw(): void {
     this.draw();

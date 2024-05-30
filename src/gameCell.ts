@@ -8,16 +8,17 @@ import { ObjSize, CellShapes } from "./lib/models";
 import { ShapeNodeParameters } from "./shapeNode";
 
 import { NumCell } from "./numCell";
-import { RegionGrid } from "./gameRegion";
 import { ShapeGrid, ShapeGridElement } from "./shapeGrid";
 import { numToCoords } from "./lib/utils";
+import { RegionGrid } from "./gameRegion";
 
 /**
  * A game cell
  */
 export class GameCell extends ShapeGridElement {
   draw() {
-    this.fill("black");
+    this.drawBorder("gray");
+    // this.fill("gray");
   }
   redraw(): void {
     this.draw();
@@ -32,6 +33,8 @@ export class GameCell extends ShapeGridElement {
  *   @param loc (the location within the gameGrid)
  */
 export class CellGRid extends ShapeGrid {
+  numCells: NumCell[][];
+
   regionGrid: RegionGrid; // Pointer to the parent region grid
   value: number | undefined = undefined; // The value of the cell
 
@@ -97,27 +100,12 @@ export class CellGRid extends ShapeGrid {
 
   // Draw the possibility grid according to parameters
   draw() {
-    // Draw the cell background
-    this.fill("gray");
-
-    // console.log("gameCell.draw()", this.value);
-    if (this.value) {
-      this.drawText(String(this.value), "white");
-    } else {
-      // Draw the possibilites
-      for (let i = 0; i < this.shapeGrid.length; i++) {
-        for (let j = 0; j < this.shapeGrid[i].length; j++) {
-          this.shapeGrid[i][j].draw();
-        }
-      }
-    }
-
-    // Add a border around the cell
-    this.drawBorder("gray");
-  }
-
-  redraw() {
-    this.draw();
+    this.fill("blue");
+    this.numCells.forEach((row) => {
+      row.forEach((cell) => {
+        // cell.draw();
+      });
+    });
   }
 
   constructor(
@@ -127,6 +115,7 @@ export class CellGRid extends ShapeGrid {
   ) {
     // Initialize the possibility grid
     super(NumCell, gridDim, param, parent);
+    this.numCells = this.shapeGrid as NumCell[][];
     this.regionGrid = this.parent as RegionGrid;
 
     this.gridDim = parent?.gridDim || { w: 100, h: 100 };

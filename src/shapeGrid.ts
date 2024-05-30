@@ -20,7 +20,9 @@ export abstract class ShapeGridElement extends ShapeNode {
   }
 
   abstract draw(): void;
+  // draw(): void { throw new Error("draw() not implemented."); }
   abstract redraw(): void;
+  // redraw(): void { throw new Error("redraw() not implemented."); }
 }
 
 /**
@@ -71,30 +73,29 @@ function createShapeGridElements<ShapeGridElement>(
  */
 export class ShapeGrid extends ShapeNode {
   gridDim: ObjSize;
-  fillColor: string = "blue";
+  fillColor: string = "yellow";
 
   // 2-D array of grid elements
   shapeGrid: ShapeGridElement[][] = [];
 
   // Draw the grid nodes according to parameters
-  draw() {
-    for (const i of this.shapeGrid) {
-      for (const j of i) {
-        // draw a filled rectangle
-        j.fill(this.fillColor);
-        j.drawText(String(j.num), "cyan");
-      }
-    }
-    // Add a border around the grid
-    this.drawBorder("red");
-  }
+  // draw() {
+  //   for (const i of this.shapeGrid) {
+  //     for (const j of i) {
+  //       // draw a filled rectangle
+  //       j.fill(this.fillColor);
+  //       j.drawText(String(j.num), "cyan");
+  //     }
+  //   }
+  //   // Add a border around the grid
+  //   this.drawBorder("red");
+  // }
 
-  // Redraw the game grid (used when the window is resized)
+  // Redraw the grid (used when the window is resized)
   redraw() {
     console.log(
       `shapeGrid[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
-    // this.fill("white");
 
     // Redraw the grid elements
     for (const i of this.shapeGrid) {
@@ -121,9 +122,14 @@ export class ShapeGrid extends ShapeNode {
           y: base.y + cdOff * j.size.h * off.y,
         };
         j.setLoc(elementLoc);
+        j.draw();
+
+        // If there are any children, then redraw them as well
+        for (const child of j.children as any) {
+          if (child?.redraw) child.redraw();
+        }
       }
     }
-    this.draw();
   }
 
   constructor(

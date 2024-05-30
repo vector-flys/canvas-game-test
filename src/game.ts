@@ -165,7 +165,7 @@ export class Game {
 
     // Draw the game grid
     this.gameGrid.redraw();
-    // this.gameGrid.draw();
+    this.gameGrid.draw();
   }
 
   constructor(
