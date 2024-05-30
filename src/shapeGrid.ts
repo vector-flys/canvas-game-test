@@ -97,6 +97,9 @@ export class ShapeGrid extends ShapeNode {
       `shapeGrid[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
 
+    // If we have a draw function, then call it
+    if ((this as any)?.draw) (this as any).draw();
+
     // Redraw the grid elements
     for (const i of this.shapeGrid) {
       for (const j of i) {
@@ -112,7 +115,7 @@ export class ShapeGrid extends ShapeNode {
         const off = offXY(j.num, this.gridDim);
         const cdOff = this.gridDim.w === 1 ? 0 : (this.gridDim.w - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
         console.log(
-          `${j.num} coords: ${JSON.stringify(coords)}, off: ${JSON.stringify(
+          `  ${j.num} coords: ${JSON.stringify(coords)}, off: ${JSON.stringify(
             off
           )}, cdOff: ${cdOff}, (${j.size.w}x${j.size.h})`
         );
@@ -122,13 +125,17 @@ export class ShapeGrid extends ShapeNode {
           y: base.y + cdOff * j.size.h * off.y,
         };
         j.setLoc(elementLoc);
-        j.draw();
+        // j.draw();
 
-        // If there are any children, then redraw them as well
-        for (const child of j.children as any) {
-          if (child?.redraw) child.redraw();
-        }
+        // // If there are any children, then redraw them as well
+        // for (const child of j.children as any) {
+        //   if (child?.redraw) child.redraw();
+        // }
       }
+    }
+    // Redraw any children of this object
+    for (const child of this.children as any) {
+      if (child?.redraw) child.redraw();
     }
   }
 

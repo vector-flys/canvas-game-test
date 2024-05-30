@@ -17,6 +17,9 @@ import { RegionGrid } from "./gameRegion";
  */
 export class GameCell extends ShapeGridElement {
   draw() {
+    console.log(
+      `gameCell[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    );
     this.drawBorder("gray");
     // this.fill("gray");
   }
@@ -32,7 +35,7 @@ export class GameCell extends ShapeGridElement {
  *   @param gameGrid (the gameGrid on which to draw)
  *   @param loc (the location within the gameGrid)
  */
-export class CellGRid extends ShapeGrid {
+export class CellGrid extends ShapeGrid {
   numCells: NumCell[][];
 
   regionGrid: RegionGrid; // Pointer to the parent region grid
@@ -100,12 +103,10 @@ export class CellGRid extends ShapeGrid {
 
   // Draw the possibility grid according to parameters
   draw() {
+    console.log(
+      `cellGrid[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    );
     this.fill("blue");
-    this.numCells.forEach((row) => {
-      row.forEach((cell) => {
-        // cell.draw();
-      });
-    });
   }
 
   constructor(

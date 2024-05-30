@@ -163,9 +163,8 @@ export class Game {
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Draw the game grid
+    // Redraw the game grid
     this.gameGrid.redraw();
-    this.gameGrid.draw();
   }
 
   constructor(

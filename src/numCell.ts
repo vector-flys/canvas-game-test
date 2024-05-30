@@ -8,7 +8,7 @@ import { CanvasRenderingContext2D } from "canvas";
 
 import { CellShapes } from "./lib/models";
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
-import { CellGRid, GameCell } from "./gameCell";
+import { CellGrid, GameCell } from "./gameCell";
 import { Shapes } from "shapes-plus";
 import { ShapeGridElement } from "./shapeGrid";
 
@@ -38,9 +38,9 @@ export class NumCell extends ShapeGridElement {
     const x = this.base.x + width * 0.15;
     const y = this.base.y + height * 0.15;
 
-    // console.log(
-    //   `numCell[${this.num}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
-    // );
+    console.log(
+      `numCell[${this.num}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    );
 
     // Draw the cell background
     this.fill("black");
