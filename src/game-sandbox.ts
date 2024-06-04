@@ -41,6 +41,10 @@ export class Game {
     if (window.destroyed) process.exit(0);
 
     // Do stuff here every interval
+    const sn = game.shapeNodes[0] as ShapeGrid;
+    sn.setLoc({ x: sn.loc.x + 1, y: sn.loc.y + 1 });
+    game.redraw();
+    dirty = true;
 
     // Add stuff here to be done every second
     if (game.ticks % (1000 / game.animInterval) === 0) {
@@ -81,8 +85,10 @@ export class Game {
       console.log("\n");
       for (const shape of parentNode.childHits({ x: mouse.x, y: mouse.y })) {
         console.log(
-          "shape %s clicked",
-          shape.name
+          "shape %s clicked, parent: %s (%s)",
+          shape.name,
+          shape?.parent?.name,
+          shape?.parent?.loc
           //, (shape as TestGridElement).num
         );
       }
@@ -123,7 +129,7 @@ export class Game {
       {
         ctx: this.ctx,
         name: "shapeGrid",
-        loc: { x: 0, y: 0 },
+        loc: { x: -300, y: -300 },
         size: { w: 400, h: 400 },
         clickable: true,
       }

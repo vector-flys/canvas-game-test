@@ -50,17 +50,24 @@ export class ShapeNode {
   /**
    * Set the location
    */
-  setLoc(loc: Coords = { x: 0, y: 0 }): void {
+  setLoc(loc: Coords = { x: 0, y: 0 }): Coords {
     this.loc = loc;
+    if (this?.parent) {
+      this.loc.x += this.parent.loc.x;
+      this.loc.y += this.parent.loc.y;
+    }
     this.base = this.topLeft();
+    return this.loc;
   }
 
   /**
    * Set the size
    */
-  setSize(size: ObjSize): void {
+  setSize(size: ObjSize): ObjSize {
     this.size = size;
     this.base = this.topLeft();
+
+    return this.size;
   }
 
   /**
@@ -156,8 +163,8 @@ export class ShapeNode {
     param: ShapeNodeParameters,
     parent: ShapeNode | undefined = undefined
   ) {
-    this.loc = param.loc;
-    this.size = param.size;
+    this.loc = param.loc; //this.setLoc(param.loc);
+    this.size = param.size; //this.setSize(param.size);
     this.name = param.name || "generic shapeNode";
     this.clickable = param.clickable || false;
     this.parent = parent;
@@ -170,9 +177,7 @@ export class ShapeNode {
     }
 
     if (this?.parent) {
-      // Child loc is relative to parent center
-      this.loc.x += this.parent.loc.x;
-      this.loc.y += this.parent.loc.y;
+      console.log("Adding %s to parent %s", this.name, this.parent?.name);
 
       this.ctx = this.parent.ctx;
     } else if (param?.ctx) {
@@ -188,6 +193,6 @@ export class ShapeNode {
     if (parent) {
       parent.children.push(this);
     }
-    // console.log("Created shapeNode:", param);
+    console.log("Created shapeNode:", param);
   }
 }
