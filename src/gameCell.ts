@@ -68,19 +68,20 @@ export class CellGrid extends ShapeNode {
   }
 
   redraw() {
-    console.log(
-      `     ${this.name}.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
-    );
+    super.redraw();
+    // console.log(
+    //   `     ${this.name}.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    // );
 
-    // Fill the game grid with the grid of cells
-    this.setSize(this.parent?.size || { w: 100, h: 100 });
-    this.cellGrid.setSize(this.size);
-    this.draw();
+    // // Fill the game grid with the grid of cells
+    // this.setSize(this.parent?.size || { w: 100, h: 100 });
+    // this.cellGrid.setSize(this.size);
+    // this.draw();
 
-    // redraw all the children
-    for (const child of this.children as any) {
-      if (child?.redraw) child.redraw();
-    }
+    // // redraw all the children
+    // for (const child of this.children as any) {
+    //   if (child?.redraw) child.redraw();
+    // }
   }
 
   constructor(

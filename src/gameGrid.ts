@@ -37,15 +37,16 @@ export class GameGrid extends ShapeNode {
   }
 
   redraw() {
-    console.log(
-      ` ${this.name}.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
-    );
-    this.draw();
+    super.redraw();
+    // console.log(
+    //   ` ${this.name}.redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    // );
+    // this.draw();
 
-    // now redraw all the children
-    for (const child of this.children as any) {
-      if (child?.redraw) child.redraw();
-    }
+    // // now redraw all the children
+    // for (const child of this.children as any) {
+    //   if (child?.redraw) child.redraw();
+    // }
   }
 
   constructor(

@@ -24,15 +24,16 @@ export class GameRegion extends ShapeGridElement {
     this.drawBorder("white");
   }
   redraw(): void {
-    console.log(
-      `    region[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
-    );
-    this.draw();
+    super.redraw();
+    // console.log(
+    //   `    region[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    // );
+    // this.draw();
 
-    // // redraw all the children
-    for (const child of this.children as any) {
-      if (child?.redraw) child.redraw();
-    }
+    // // // redraw all the children
+    // for (const child of this.children as any) {
+    //   if (child?.redraw) child.redraw();
+    // }
   }
 
   constructor(num: number, param: ShapeNodeParameters, parent?: ShapeNode) {

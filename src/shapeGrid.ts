@@ -19,9 +19,9 @@ export abstract class ShapeGridElement extends ShapeNode {
     this.num = num;
   }
 
-  abstract draw(): void;
+  // abstract draw(): void;
   // draw(): void { throw new Error("draw() not implemented."); }
-  abstract redraw(): void;
+  // abstract redraw(): void;
   // redraw(): void { throw new Error("redraw() not implemented."); }
 }
 
@@ -93,6 +93,7 @@ export class ShapeGrid extends ShapeNode {
 
   // Redraw the grid (used when the window is resized)
   redraw() {
+    // We do not need to call super.redraw() because we are special...
     console.log(
       `shapeGrid[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
@@ -119,7 +120,8 @@ export class ShapeGrid extends ShapeNode {
             off
           )}, cdOff: ${cdOff}, (${Math.floor(j.size.w)}x${Math.floor(
             j.size.h
-          )})`
+          )}), parent: ${JSON.stringify(this?.parent?.parent?.loc)}
+          }`
         );
 
         const elementLoc = {

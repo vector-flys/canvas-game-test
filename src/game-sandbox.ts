@@ -10,11 +10,25 @@ import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { ShapeGrid, ShapeGridElement } from "./shapeGrid";
 
 class TestGridElement extends ShapeGridElement {
+  // draw(): void {
+  //   this.drawText(String(this.num), "white");
+  // }
+  // redraw(): void {
+  //   super.redraw();
+  //   this.draw();
+  // }
+}
+
+class ShapeChild extends ShapeNode {
   draw(): void {
-    this.drawText(String(this.num), "white");
+    this.fill("red");
   }
-  redraw(): void {
-    this.draw();
+  // redraw(): void {
+  //   super.redraw();
+  //   this.draw();
+  // }
+  constructor(param: ShapeNodeParameters, parent?: ShapeNode) {
+    super(param, parent);
   }
 }
 
@@ -110,8 +124,10 @@ export class Game {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Draw the board
-    const gameGrid = this.shapeNodes[0] as ShapeGrid;
-    gameGrid.redraw();
+    const gameGrid = this.shapeNodes[0]; //as ShapeGrid;
+    gameGrid.fill("white");
+    gameGrid.children[0].fill("red");
+    gameGrid.children[0].children[0].fill("blue");
   }
 
   constructor(
@@ -122,20 +138,43 @@ export class Game {
     this.ctx = ctx;
     this.canvas = ctx.canvas;
 
-    // Add a shapeGrid
-    this.shapeNodes[0] = new ShapeGrid(
-      TestGridElement,
-      { w: dim, h: dim },
-      {
-        ctx: this.ctx,
-        name: "shapeGrid",
-        loc: { x: -300, y: -300 },
-        size: { w: 400, h: 400 },
-        clickable: true,
-      }
-    );
+    // // Add a shapeGrid
+    // this.shapeNodes[0] = new ShapeGrid(
+    //   TestGridElement,
+    //   { w: dim, h: dim },
+    //   {
+    //     ctx: this.ctx,
+    //     name: "shapeGrid",
+    //     loc: { x: -300, y: -300 },
+    //     size: { w: 400, h: 400 },
+    //     clickable: true,
+    //   }
+    // );
+    // Add a shapeNode
+    this.shapeNodes[0] = new ShapeNode({
+      ctx: this.ctx,
+      name: "shapeNode",
+      loc: { x: -100, y: -100 },
+      size: { w: 200, h: 200 },
+      clickable: true,
+    });
+    const child1 = this.shapeNodes[0].addChild({
+      ctx: this.ctx,
+      name: "child1",
+      loc: { x: -25, y: -25 },
+      size: { w: 150, h: 150 },
+      clickable: true,
+    });
+
+    const child2 = child1.addChild({
+      ctx: this.ctx,
+      name: "child2",
+      loc: { x: 50, y: 50 },
+      size: { w: 100, h: 100 },
+      clickable: true,
+    });
 
     // Start the animation timer
-    setInterval(this.anim, this.animInterval, this, window);
+    // setInterval(this.anim, this.animInterval, this, window);
   }
 }

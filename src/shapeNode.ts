@@ -28,6 +28,19 @@ export class ShapeNode {
   clickable: boolean;
   children: ShapeNode[] = [];
 
+  redraw() {
+    console.log(
+      `shapeNode[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    );
+    // If we have a draw function, then call it
+    if ((this as any)?.draw) (this as any).draw();
+
+    // now redraw all the children
+    for (const child of this.children as any) {
+      if (child?.redraw) child.redraw();
+    }
+  }
+
   /**
    * Find topLeft
    */
@@ -40,10 +53,13 @@ export class ShapeNode {
       x: ctxCenter.x + this.loc.x - this.size.w / 2,
       y: ctxCenter.y + this.loc.y - this.size.h / 2,
     };
-    // if (this?.parent) {
-    //   topLeft.x += this.parent.base.x;
-    //   topLeft.y += this.parent.base.y;
-    // }
+    // This location is relative to the parent tree
+    let parent = this.parent;
+    while (parent) {
+      topLeft.x += parent.loc.x;
+      topLeft.y += parent.loc.y;
+      parent = parent.parent;
+    }
     return topLeft;
   }
 
@@ -52,10 +68,10 @@ export class ShapeNode {
    */
   setLoc(loc: Coords = { x: 0, y: 0 }): Coords {
     this.loc = loc;
-    if (this?.parent) {
-      this.loc.x += this.parent.loc.x;
-      this.loc.y += this.parent.loc.y;
-    }
+    // if (this?.parent) {
+    //   this.loc.x += this.parent.loc.x;
+    //   this.loc.y += this.parent.loc.y;
+    // }
     this.base = this.topLeft();
     return this.loc;
   }

@@ -88,6 +88,7 @@ export class NumCell extends ShapeGridElement {
   }
 
   redraw(): void {
+    super.redraw();
     this.draw();
   }
 
