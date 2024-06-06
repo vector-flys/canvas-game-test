@@ -28,12 +28,7 @@ export class GameGrid extends ShapeNode {
       this.children.map((c) => c.name).join(", "),
       "]"
     );
-    this.fill("red");
-    // for (const i of this.gameRegions) {
-    //   for (const j of i) {
-    //     j.draw();
-    //   }
-    // }
+    this.fill("green");
   }
 
   redraw() {

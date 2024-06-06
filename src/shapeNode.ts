@@ -209,6 +209,6 @@ export class ShapeNode {
     if (parent) {
       parent.children.push(this);
     }
-    console.log("Created shapeNode:", param);
+    // console.log("Created shapeNode:", param);
   }
 }

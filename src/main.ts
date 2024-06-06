@@ -19,8 +19,8 @@
 
 import { Events, video } from "@kmamal/sdl";
 import { Canvas, CanvasRenderingContext2D, createCanvas } from "canvas";
-import { Game } from "./game-sandbox";
-// import { Game } from "./game";
+// import { Game } from "./game-sandbox";
+import { Game } from "./game";
 
 const window = video.createWindow({ title: "Game Test", resizable: true });
 
@@ -59,7 +59,7 @@ const redraw = () => {
   }
 
   // Draw the game object
-  game?.redraw();
+  game.redraw();
 
   // Update the contents of the window
   const buffer = canvas.toBuffer("raw");

@@ -48,7 +48,7 @@ export class GameCell extends ShapeGridElement {
  *   @param dim: number of cells in each direction
  */
 export class CellGrid extends ShapeNode {
-  cellGrid: ShapeGrid;
+  // cellGrid: ShapeGrid;
   gridDim: ObjSize;
   // gameGrid: GameGrid; // Pointer to the parent game grid
   value: number | undefined = undefined; // for debugging purposes
@@ -92,18 +92,18 @@ export class CellGrid extends ShapeNode {
     super(param, parent);
     this.gridDim = gridDim;
 
-    // Create a new cell shape grid
-    this.cellGrid = new ShapeGrid(
-      GameCell,
-      this.gridDim,
-      {
-        ctx: this.ctx,
-        name: "cellGrid",
-        loc: { x: 0, y: 0 },
-        size: this.size,
-        clickable: true,
-      },
-      this
-    );
+    // // Create a new cell shape grid
+    // this.cellGrid = new ShapeGrid(
+    //   GameCell,
+    //   this.gridDim,
+    //   {
+    //     ctx: this.ctx,
+    //     name: "cellGrid",
+    //     loc: { x: 0, y: 0 },
+    //     size: this.size,
+    //     clickable: true,
+    //   },
+    //   this
+    // );
   }
 }
