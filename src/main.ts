@@ -31,7 +31,7 @@ var game: Game;
 // The redraw wrapper for node-canvas
 const redraw = () => {
   const { pixelWidth: width, pixelHeight: height } = window;
-  console.log("redraw", width, height);
+  console.log("main.redraw()", width, height);
 
   // Initialize if we have not already done so
   if (!canvas) {

@@ -193,7 +193,7 @@ export class ShapeNode {
     }
 
     if (this?.parent) {
-      console.log("Adding %s to parent %s", this.name, this.parent?.name);
+      console.log("- Adding %s to parent %s", this.name, this.parent?.name);
 
       this.ctx = this.parent.ctx;
     } else if (param?.ctx) {
