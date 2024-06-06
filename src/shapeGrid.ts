@@ -57,7 +57,16 @@ function createShapeGridElements<ShapeGridElement>(
       if (!instances[ci]?.[ri]) {
         const num = ri * gridDim.w + ci + 1;
         param.name = `${baseName} element ${num}`;
-        instances[ci][ri] = new classConstructor(num, param, parent);
+        instances[ci][ri] = new classConstructor(
+          num,
+          {
+            ctx: param.ctx,
+            loc: { x: 0, y: 0 },
+            size: { w: param.size.w / gridDim.w, h: param.size.h / gridDim.h },
+            clickable: param.clickable,
+          },
+          parent
+        );
       }
     }
   }
@@ -79,17 +88,17 @@ export class ShapeGrid extends ShapeNode {
   shapeGrid: ShapeGridElement[][] = [];
 
   // Draw the grid nodes according to parameters
-  // draw() {
-  //   for (const i of this.shapeGrid) {
-  //     for (const j of i) {
-  //       // draw a filled rectangle
-  //       j.fill(this.fillColor);
-  //       j.drawText(String(j.num), "cyan");
-  //     }
-  //   }
-  //   // Add a border around the grid
-  //   this.drawBorder("red");
-  // }
+  draw() {
+    for (const i of this.shapeGrid) {
+      for (const j of i) {
+        // draw a filled rectangle
+        j.fill(this.fillColor);
+        j.drawText(String(j.num), "cyan");
+      }
+    }
+    // Add a border around the grid
+    this.drawBorder("red");
+  }
 
   // Redraw the grid (used when the window is resized)
   redraw() {
@@ -129,7 +138,7 @@ export class ShapeGrid extends ShapeNode {
           y: base.y + cdOff * j.size.h * off.y,
         };
         j.setLoc(elementLoc);
-        // j.draw();
+        // if ((j as any)?.draw) (j as any).draw();
 
         // // If there are any children, then redraw them as well
         // for (const child of j.children as any) {
@@ -137,6 +146,8 @@ export class ShapeGrid extends ShapeNode {
         // }
       }
     }
+    this.draw();
+
     // Redraw any children of this object
     for (const child of this.children as any) {
       // console.log(`    -- redrawing child ${child.name}`);
