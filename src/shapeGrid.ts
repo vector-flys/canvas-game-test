@@ -83,7 +83,10 @@ function createShapeGridElements<ShapeGridElement>(
  */
 export class ShapeGrid extends ShapeNode {
   gridDim: ObjSize;
+  borderColor: string = "red";
+  divColor: string = "black";
   fillColor: string = "yellow";
+  textColor: string = "cyan";
 
   // 2-D array of grid elements
   shapeGrid: ShapeGridElement[][] = [];
@@ -105,12 +108,14 @@ export class ShapeGrid extends ShapeNode {
         // draw a filled rectangle with the number
         if (j.visible) {
           if (this.fillColor.length > 0) j.fill(this.fillColor);
-          j.drawText(String(j.num), "cyan");
+          if (this.textColor.length > 0)
+            j.drawText(String(j.num), this.textColor);
+          if (this.divColor.length > 0) j.drawBorder(this.divColor);
         }
       }
     }
     // Add a border around the grid
-    this.drawBorder("red");
+    if (this.borderColor.length > 0) this.drawBorder(this.borderColor);
   }
 
   // Redraw the grid (used when the window is resized)

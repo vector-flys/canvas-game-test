@@ -6,7 +6,7 @@
 
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
 import { ObjSize } from "./lib/models";
-import { RegionGrid, GameRegion } from "./gameRegion";
+import { GameRegion } from "./gameRegion";
 import { ShapeGrid } from "./shapeGrid";
 
 /**
@@ -27,7 +27,10 @@ export class GameGrid extends ShapeGrid {
     super(GameRegion, gridDim, param, parent);
     this.gridDim = gridDim;
     this.name = "gameGrid";
-    this.fillColor = ""; // If using the default draw function
+    this.borderColor = "#10cf10";
+    this.divColor = "lightGray";
+    this.fillColor = "";
+    this.textColor = "white";
 
     // this.gameRegions = this.shapeGrid as GameRegion[][];
     // ensure they didn't ask for something stupid
