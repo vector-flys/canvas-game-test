@@ -147,7 +147,7 @@ export class Game {
       {
         ctx: this.ctx,
         name: "shapeGrid",
-        loc: { x: -10, y: -10 },
+        loc: { x: -100, y: -100 },
         size: { w: 300, h: 300 },
         clickable: true,
       }
@@ -177,6 +177,6 @@ export class Game {
     // });
 
     // Start the animation timer
-    setInterval(this.anim, this.animInterval, this, window);
+    // setInterval(this.anim, this.animInterval, this, window);
   }
 }

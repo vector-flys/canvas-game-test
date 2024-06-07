@@ -106,6 +106,7 @@ export class ShapeGrid extends ShapeNode {
     console.log(
       `shapeGrid[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
+    this.base = this.topLeft();
 
     // If we have a draw function, then call it
     if ((this as any)?.draw) (this as any).draw();
