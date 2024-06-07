@@ -19,8 +19,9 @@ export class GameRegion extends ShapeGridElement {
 
   draw() {
     if (!this.visible) return;
+    const spaces = " ".repeat(this.shapeDepth() * 2);
     console.log(
-      `    region[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `${spaces}   region[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
     this.drawBorder("lightGray");
   }
@@ -40,6 +41,7 @@ export class GameRegion extends ShapeGridElement {
   constructor(num: number, param: ShapeNodeParameters, parent?: ShapeNode) {
     super(num, param, parent);
     this.gridDim = (this?.parent as RegionGrid).gridDim;
+    this.name = `region${num}`;
   }
 }
 
@@ -88,6 +90,7 @@ export class RegionGrid extends ShapeNode {
   constructor(gridDim: ObjSize, param: ShapeNodeParameters, parent?: GameGrid) {
     super(param, parent);
     this.gridDim = gridDim;
+    this.name = "regionGrid";
 
     // // Create a new region shape grid
     // this.regionGrid = new ShapeGrid(
