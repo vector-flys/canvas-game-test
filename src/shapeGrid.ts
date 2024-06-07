@@ -64,6 +64,7 @@ function createShapeGridElements<ShapeGridElement>(
             loc: { x: 0, y: 0 },
             size: { w: param.size.w / gridDim.w, h: param.size.h / gridDim.h },
             clickable: param.clickable,
+            visible: false,
           },
           parent
         );
@@ -87,13 +88,25 @@ export class ShapeGrid extends ShapeNode {
   // 2-D array of grid elements
   shapeGrid: ShapeGridElement[][] = [];
 
-  // Draw the grid nodes according to parameters
+  /**
+   * Draw the grid nodes according to parameters
+   *
+   * This will most likely be overridden by the child class
+   */
+
   draw() {
+    if (!this.visible) return;
+    const spaces = " ".repeat(this.shapeDepth() * 2);
+    console.log(
+      `${spaces}  shapeGrid[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+    );
     for (const i of this.shapeGrid) {
       for (const j of i) {
-        // draw a filled rectangle
-        j.fill(this.fillColor);
-        j.drawText(String(j.num), "cyan");
+        // draw a filled rectangle with the number
+        if (j.visible) {
+          if (this.fillColor.length > 0) j.fill(this.fillColor);
+          j.drawText(String(j.num), "cyan");
+        }
       }
     }
     // Add a border around the grid
@@ -103,8 +116,9 @@ export class ShapeGrid extends ShapeNode {
   // Redraw the grid (used when the window is resized)
   redraw() {
     // We do not need to call super.redraw() because we are special...
+    const spaces = " ".repeat(this.shapeDepth() * 2);
     console.log(
-      `shapeGrid[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `${spaces}shapeGrid[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
     this.base = this.topLeft();
 
@@ -125,26 +139,21 @@ export class ShapeGrid extends ShapeNode {
         const coords = numToCoords(j.num, this.gridDim);
         const off = offXY(j.num, this.gridDim);
         const cdOff = this.gridDim.w === 1 ? 0 : (this.gridDim.w - 1) / 2; // 1 = 0, 2 = 0.5, 3 = 1, 4 = 1.5
-        console.log(
-          `  ${j.num} coords: ${JSON.stringify(coords)}, off: ${JSON.stringify(
-            off
-          )}, cdOff: ${cdOff}, (${Math.floor(j.size.w)}x${Math.floor(
-            j.size.h
-          )}), parent: ${JSON.stringify(this?.parent?.parent?.loc)}
-          }`
-        );
+        // console.log(
+        //   `  ${j.num} coords: ${JSON.stringify(coords)}, off: ${JSON.stringify(
+        //     off
+        //   )}, cdOff: ${cdOff}, (${Math.floor(j.size.w)}x${Math.floor(
+        //     j.size.h
+        //   )}), parent: ${JSON.stringify(this?.parent?.parent?.loc)}
+        //   }`
+        // );
 
         const elementLoc = {
           x: base.x + cdOff * j.size.w * off.x,
           y: base.y + cdOff * j.size.h * off.y,
         };
         j.setLoc(elementLoc);
-        // if ((j as any)?.draw) (j as any).draw();
-
-        // // If there are any children, then redraw them as well
-        // for (const child of j.children as any) {
-        //   if (child?.redraw) child.redraw();
-        // }
+        j.visible = this.visible;
       }
     }
     this.draw();

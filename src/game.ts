@@ -137,7 +137,7 @@ export class Game {
       // console.log("mouse:", mouse);
 
       // Loop through all regions and all cells to check for a hit
-      console.log("Mouse: checking %s cells", this.gameSize);
+      console.log("\n\nMouse: checking %s cells", this.gameSize);
       for (const child of this.gameGrid.childHits({ x: mouse.x, y: mouse.y })) {
         console.log("  - shape hit:", child.name);
       }
@@ -184,6 +184,7 @@ export class Game {
       loc: { x: 0, y: 0 },
       size: { w: this.canvas.width, h: this.canvas.height },
       clickable: true,
+      // visible: false,
     });
 
     // Start the animation timer

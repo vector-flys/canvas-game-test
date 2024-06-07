@@ -11,6 +11,7 @@ export interface ShapeNodeParameters {
   size: ObjSize;
   name?: string;
   clickable?: boolean;
+  visible?: boolean;
 }
 
 interface childList {
@@ -26,11 +27,19 @@ export class ShapeNode {
   size: ObjSize;
   parent: ShapeNode | undefined;
   clickable: boolean;
+  visible: boolean;
   children: ShapeNode[] = [];
 
+  /**
+   * Generic redraw
+   *   draw this shape and then redraw any children
+   *
+   * This can be overridden for special cases
+   */
   redraw() {
+    const spaces = " ".repeat(this.shapeDepth() * 2);
     console.log(
-      `shapeNode[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
+      `${spaces}shapeNode[${this.name}].redraw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
     // If we have a draw function, then call it
     if ((this as any)?.draw) (this as any).draw();
@@ -39,6 +48,19 @@ export class ShapeNode {
     for (const child of this.children as any) {
       if (child?.redraw) child.redraw();
     }
+  }
+
+  /**
+   * Find out how many ancestors we have
+   */
+  shapeDepth(): number {
+    let depth = 0;
+    let parent = this.parent;
+    while (parent) {
+      depth++;
+      parent = parent.parent;
+    }
+    return depth;
   }
 
   /**
@@ -182,7 +204,12 @@ export class ShapeNode {
     this.loc = param.loc; //this.setLoc(param.loc);
     this.size = param.size; //this.setSize(param.size);
     this.name = param.name || "generic shapeNode";
-    this.clickable = param.clickable || false;
+    this.clickable = param?.clickable || false;
+    // console.log("Creating shapeNode:", this.name, param.visible);
+    this.visible = param.hasOwnProperty("visible")
+      ? (param.visible as boolean)
+      : true;
+
     this.parent = parent;
 
     if (param?.ctx && this?.parent) {
@@ -193,7 +220,7 @@ export class ShapeNode {
     }
 
     if (this?.parent) {
-      console.log("- Adding %s to parent %s", this.name, this.parent?.name);
+      // console.log("- Adding %s to parent %s", this.name, this.parent?.name);
 
       this.ctx = this.parent.ctx;
     } else if (param?.ctx) {

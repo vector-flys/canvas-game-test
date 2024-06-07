@@ -33,6 +33,8 @@ export class NumCell extends ShapeGridElement {
 
   // Draw the cell according to its parameters
   draw() {
+    if (!this.visible) return;
+
     const width = this.size.w;
     const height = this.size.h;
     const x = this.base.x + width * 0.15;

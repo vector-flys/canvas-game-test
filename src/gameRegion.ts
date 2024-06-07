@@ -18,6 +18,7 @@ export class GameRegion extends ShapeGridElement {
   gridDim: ObjSize;
 
   draw() {
+    if (!this.visible) return;
     console.log(
       `    region[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
     );
@@ -39,18 +40,6 @@ export class GameRegion extends ShapeGridElement {
   constructor(num: number, param: ShapeNodeParameters, parent?: ShapeNode) {
     super(num, param, parent);
     this.gridDim = (this?.parent as RegionGrid).gridDim;
-    // // Create a new cell shape grid
-    // this.cellGrid = new CellGrid(
-    //   this.gridDim,
-    //   {
-    //     ctx: this.ctx,
-    //     name: "cellGridParent",
-    //     loc: { x: 0, y: 0 },
-    //     size: this.size,
-    //     clickable: true,
-    //   },
-    //   this
-    // );
   }
 }
 
@@ -69,8 +58,10 @@ export class RegionGrid extends ShapeNode {
 
   // Draw the region cells according to parameters
   draw() {
+    if (!this.visible) return;
+    const spaces = " ".repeat(this.shapeDepth() * 2);
     console.log(
-      `    ${this.name}.draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
+      `${spaces}  ${this.name}.draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
       "- parent:",
       this.parent?.name,
       ", children [",

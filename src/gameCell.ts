@@ -14,6 +14,7 @@ import { GameRegion } from "./gameRegion";
  */
 export class GameCell extends ShapeGridElement {
   draw() {
+    if (!this.visible) return;
     console.log(
       `         cell[${this.name}].draw([${Math.floor(
         this.loc.x
@@ -55,6 +56,7 @@ export class CellGrid extends ShapeNode {
 
   // Draw the cell cells according to parameters
   draw() {
+    if (!this.visible) return;
     console.log(
       `       ${this.name}.draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`,
       "- parent:",
