@@ -16,17 +16,18 @@ export class GameRegion extends ShapeGridElement {
   // cellGrid: CellGrid;
   gridDim: ObjSize;
 
+  // // Override draw for this region
   // draw() {
   //   if (!this.visible) return;
   //   const spaces = " ".repeat(this.shapeDepth() * 2);
   //   console.log(
   //     `${spaces}   region[${this.name}].draw([${this.loc.x}, ${this.loc.y}] ${this.size.w}x${this.size.h})`
   //   );
-  //   this.drawBorder("white");
+  //   this.drawBorder("#1010ff");
   // }
-  redraw(): void {
-    super.redraw();
-  }
+  // redraw(): void {
+  //   super.redraw();
+  // }
 
   constructor(num: number, param: ShapeNodeParameters, parent?: ShapeNode) {
     super(num, param, parent);

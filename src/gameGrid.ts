@@ -19,6 +19,8 @@ import { ShapeGrid } from "./shapeGrid";
 export class GameGrid extends ShapeGrid {
   gridDim: ObjSize;
 
+  // Override draw for the game grid
+
   constructor(
     gridDim: ObjSize,
     param: ShapeNodeParameters,
@@ -27,7 +29,7 @@ export class GameGrid extends ShapeGrid {
     super(GameRegion, gridDim, param, parent);
     this.gridDim = gridDim;
     this.name = "gameGrid";
-    this.borderColor = "#10cf10";
+    this.borderColor = "#40cf40";
     this.divColor = "lightGray";
     this.fillColor = "";
     this.textColor = "white";

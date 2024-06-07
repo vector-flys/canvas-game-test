@@ -114,8 +114,6 @@ export class ShapeGrid extends ShapeNode {
         }
       }
     }
-    // Add a border around the grid
-    if (this.borderColor.length > 0) this.drawBorder(this.borderColor);
   }
 
   // Redraw the grid (used when the window is resized)
@@ -131,6 +129,7 @@ export class ShapeGrid extends ShapeNode {
     if ((this as any)?.draw) (this as any).draw();
 
     // Redraw the grid elements
+    let expose = false;
     for (const i of this.shapeGrid) {
       for (const j of i) {
         // calculate the size and location of the grid element
@@ -158,15 +157,27 @@ export class ShapeGrid extends ShapeNode {
           y: base.y + cdOff * j.size.h * off.y,
         };
         j.setLoc(elementLoc);
+        if (!j.visible && this.visible) expose = true;
         j.visible = this.visible;
       }
     }
-    this.draw();
+    // If this is the first time exposing one or more elements, then draw the grid
+    if (expose) this.draw();
 
     // Redraw any children of this object
     for (const child of this.children as any) {
       // console.log(`    -- redrawing child ${child.name}`);
       if (child?.redraw) child.redraw();
+    }
+
+    // Add a border around the grid
+    if (this.visible && this.borderColor.length > 0) {
+      const ctx = this.ctx;
+      ctx.save();
+      ctx.strokeStyle = this.borderColor;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(this.base.x, this.base.y, this.size.w, this.size.h);
+      ctx.restore();
     }
   }
 
