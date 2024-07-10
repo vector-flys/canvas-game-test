@@ -91,7 +91,7 @@ export class Game {
   }
 
   redraw() {
-    console.log("game-mastermind.redraw()");
+    console.log("game.redraw()");
 
     // Create a gradient background
     const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);

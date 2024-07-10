@@ -19,9 +19,10 @@
 
 import { Events, video } from "@kmamal/sdl";
 import { Canvas, CanvasRenderingContext2D, createCanvas } from "canvas";
-// import { Game } from "./game-sandbox";
-import { Game } from "./game-sudoku";
-// import { Game } from "./game";
+// import { Game } from "./game-sandbox";  // Shapegrid test
+// import { Game } from "./game-sudoku";
+// import { Game } from "./game";  // Generic shapes
+import { Game } from "./game-mastermind";
 
 const window = video.createWindow({ title: "Game Test", resizable: true });
 

@@ -1,5 +1,5 @@
 /**
- * Generic Game class
+ * Game class for mastermind
  */
 
 "use strict";
