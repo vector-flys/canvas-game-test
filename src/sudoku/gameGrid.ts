@@ -4,10 +4,10 @@
 
 "use strict";
 
-import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
-import { ObjSize } from "./lib/models";
+import { ShapeNode, ShapeNodeParameters } from "../shapeNode";
+import { ObjSize } from "../lib/models";
 import { GameRegion } from "./gameRegion";
-import { ShapeGrid } from "./shapeGrid";
+import { ShapeGrid } from "../shapeGrid";
 
 /**
  * Grid for the game board

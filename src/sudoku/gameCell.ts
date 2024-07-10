@@ -4,9 +4,9 @@
 
 "use strict";
 
-import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
-import { ShapeGrid, ShapeGridElement } from "./shapeGrid";
-import { ObjSize } from "./lib/models";
+import { ShapeNode, ShapeNodeParameters } from "../shapeNode";
+import { ShapeGrid, ShapeGridElement } from "../shapeGrid";
+import { ObjSize } from "../lib/models";
 import { GameRegion } from "./gameRegion";
 
 /**

@@ -6,7 +6,7 @@
 
 import { Canvas, CanvasRenderingContext2D } from "canvas";
 import { Events, Sdl } from "@kmamal/sdl";
-import { GameGrid } from "./gameGrid";
+import { GameGrid } from "./sudoku/gameGrid";
 import { ObjSize } from "./lib/models";
 
 export class Game {

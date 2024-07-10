@@ -8,7 +8,7 @@ import { CanvasRenderingContext2D } from "canvas";
 
 import { CellShapes } from "./lib/models";
 import { ShapeNode, ShapeNodeParameters } from "./shapeNode";
-import { CellGrid, GameCell } from "./gameCell";
+import { CellGrid, GameCell } from "./sudoku/gameCell";
 import { Shapes } from "shapes-plus";
 import { ShapeGridElement } from "./shapeGrid";
 
